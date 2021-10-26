@@ -39,14 +39,13 @@ def histogrammes(indexes, im_coll):
     '''
     if type(indexes) == int:
         indexes = [indexes]
-        
+
     fig = plt.figure()
-    ax = fig.subplots(len(indexes),4)
-
-
-    for num_images in range(len(indexes)):
+    #ax = fig.subplots(len(indexes), 4)
+    mean_list = []
+    for num_images in range(len(im_coll.image_list)):
     
-        imageRGB = np.array(Image.open(im_coll.image_folder + '\\' + im_coll.image_list[indexes[num_images]]))
+        imageRGB = np.array(Image.open(im_coll.image_folder + '\\' + im_coll.image_list[num_images]))
         imageLab = skic.rgb2lab(imageRGB)
         imageHSV = skic.rgb2hsv(imageRGB)
         imageCMYK = rgb_to_cmyk(imageRGB)
@@ -60,12 +59,12 @@ def histogrammes(indexes, im_coll):
         max_L = 100
         min_ab = -110
         max_ab = 110
-        imageLabhist = np.zeros(imageLab.shape)
-        imageLabhist[:,:,0] = np.round(imageLab[:,:,0]*(n_bins-1)/max_L) #L has all values between 0 and 100
-        imageLabhist[:,:,1] = np.round((imageLab[:,:,1]-min_ab)*(n_bins-1)/(max_ab-min_ab)) #ab has all values between -110 and 110
-        imageLabhist[:, :, 2] = np.round((imageLab[:, :, 2] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
+        # imageLabhist = np.zeros(imageLab.shape)
+        # imageLabhist[:,:,0] = np.round(imageLab[:,:,0]*(n_bins-1)/max_L) #L has all values between 0 and 100
+        # imageLabhist[:,:,1] = np.round((imageLab[:,:,1]-min_ab)*(n_bins-1)/(max_ab-min_ab)) #ab has all values between -110 and 110
+        # imageLabhist[:, :, 2] = np.round((imageLab[:, :, 2] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
 
-        imageHSVhist = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
+        # imageHSVhist = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
     
         # A list per color channel
         pixel_valuesRGB = np.zeros((3,n_bins))
@@ -75,10 +74,10 @@ def histogrammes(indexes, im_coll):
     
         for i in range(n_bins):
             for j in range(4):
-                if j < 3:
-                    pixel_valuesRGB[j,i] = np.count_nonzero(imageRGB[:,:,j]==i)
-                    pixel_valuesLab[j,i] = np.count_nonzero(imageLabhist[:,:,j]==i)
-                    pixel_valuesHSV[j,i] = np.count_nonzero(imageHSVhist[:,:,j]==i)
+                # if j < 3:
+                    # pixel_valuesRGB[j,i] = np.count_nonzero(imageRGB[:,:,j]==i)
+                    # pixel_valuesLab[j,i] = np.count_nonzero(imageLabhist[:,:,j]==i)
+                    # pixel_valuesHSV[j,i] = np.count_nonzero(imageHSVhist[:,:,j]==i)
                 pixel_valuesCMYK[j,i] = np.count_nonzero(imageCMYK[:,:,j]==i)
 
         skip = 5
@@ -86,6 +85,7 @@ def histogrammes(indexes, im_coll):
         end = n_bins-skip
         #print('pixel values: ', pixel_values[0,:])
         #print('sum pixels: ', np.sum(pixel_values[0,:]))
+        '''
         ax[num_images,0].scatter(range(start,end), pixel_valuesRGB[0,start:end], c='red')
         ax[num_images,0].scatter(range(start,end), pixel_valuesRGB[1,start:end], c='green')
         ax[num_images,0].scatter(range(start,end), pixel_valuesRGB[2,start:end], c='blue')
@@ -111,8 +111,9 @@ def histogrammes(indexes, im_coll):
         ax[num_images, 3].scatter(range(start, end), pixel_valuesCMYK[2, start:end], c='yellow')
         ax[num_images, 3].scatter(range(start, end), pixel_valuesCMYK[3, start:end], c='grey')
         ax[num_images, 3].set(xlabel='pixels', ylabel='compte par valeur d\'intensité')
-        ax[num_images, 3].set_title(f'histogramme CMYK de {image_name}')
-    return None
+        ax[num_images, 3].set_title(f'histogramme CMYK de {image_name}')'''
+        mean_list.append(pixel_valuesCMYK)
+    return mean_list
 
 
 def random_image_selector(number, im_coll):
@@ -151,23 +152,42 @@ def images_display(indexes, im_coll):
         im = Image.open(im_coll.image_folder + '\\' + im_coll.image_list[indexes[i]])
         ax2[i].imshow(im) 
 
+def find_mean(hist):
+    n_bins = 256
+    means = [[], [], []]
+    for i in range(len(hist[0][0, :])):
+        for j in range(3):
+            means[j].append(np.mean(hist[i][:, :, j]))
 
+            # means[j].append(np.average(range(n_bins), weights=hist[i][j, :]))
+
+    print('Done mean')
+    return means[0], means[1], means[2]
 
 def main():
+    fig = plt.figure()
+    mean = plt.axes(projection='3d')
     forest = ImageCollection("forest")
-    im_list_forest = random_image_selector(6, forest)
-    images_display(im_list_forest, forest)
-    histogrammes(im_list_forest, forest)
+    indexes = 6
+    im_list_forest = random_image_selector(indexes, forest)
+    #images_display(im_list_forest, forest)
+    xf, yf, zf = find_mean(histogrammes(im_list_forest, forest))
+    mean.scatter(xf, yf, zf, c='green')
 
     street = ImageCollection("street")
-    im_list_street = random_image_selector(6, street)
-    images_display(im_list_street, street)
-    histogrammes(im_list_street, street)
+    im_list_street = random_image_selector(indexes, street)
+    #images_display(im_list_street, street)
+    xs, ys, zs = find_mean(histogrammes(im_list_street, street))
+    mean.scatter(xs, ys, zs, c='red')
     
     coast = ImageCollection("coast")
-    im_list_coast = random_image_selector(6, coast)
-    images_display(im_list_coast, coast)
-    histogrammes(im_list_coast, coast)
+    im_list_coast = random_image_selector(indexes, coast)
+    #images_display(im_list_coast, coast)
+    xc, yc, zc = find_mean(histogrammes(im_list_coast, coast))
+    mean.scatter(xc, yc, zc, c='blue')
+    mean.set_xlabel('x')
+    mean.set_ylabel('y')
+    mean.set_zlabel('z')
     plt.show()
 
 if __name__ == '__main__':
