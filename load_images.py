@@ -144,7 +144,7 @@ def main():
     print(im_list)
     images_display(im_list)
     histogrammes(im_list)
-    plt.show(block=False)
+    plt.show()
 
 if __name__ == '__main__':
     main()
