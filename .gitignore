@@ -2,3 +2,5 @@
 .idea/
 
 venv-tower/
+
+__pycache__/

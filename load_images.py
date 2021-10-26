@@ -10,6 +10,8 @@ import glob
 from PIL import Image
 
 # liste de toutes les images
+from color_transformation import rgb_to_lab
+
 path = glob.glob(r".\baseDeDonneesImages\*.jpg")
 image_folder = r".\baseDeDonneesImages"
 image_list = os.listdir(image_folder)
@@ -45,14 +47,23 @@ def histogrammes(image_list, indexes=1):
     
         # A list per color channel
         pixel_values = np.zeros((3,n_bins))
-    
+
+        PIL_image = Image.fromarray(np.uint8(image)).convert('RGB')
+        lab_img = rgb_to_lab(PIL_image)
+        lab_arr = np.array(lab_img)
+
         for i in range(n_bins):
-            pixel_values[0,i] = np.count_nonzero(image[:,:,0]==i)
-            pixel_values[1,i] = np.count_nonzero(image[:,:,1]==i)
-            pixel_values[2,i] = np.count_nonzero(image[:,:,2]==i)
+            pixel_values[0,i] = np.count_nonzero(lab_arr[:,:,0]==i)
+            pixel_values[1,i] = np.count_nonzero(lab_arr[:,:,1]==i)
+            pixel_values[2,i] = np.count_nonzero(lab_arr[:,:,2]==i)
 
         #print('pixel values: ', pixel_values[0,:])
         #print('sum pixels: ', np.sum(pixel_values[0,:]))
+
+        pixel_values[0, :] = pixel_values[0, :]/np.max(pixel_values[0, :])
+        pixel_values[1, :] = pixel_values[1, :] / np.max(pixel_values[1, :])
+        pixel_values[2, :] = pixel_values[2, :] / np.max(pixel_values[2, :])
+
         ax[num_images].scatter(range(n_bins), pixel_values[0,:], c='red')
         ax[num_images].scatter(range(n_bins), pixel_values[1,:], c='green')
         ax[num_images].scatter(range(n_bins), pixel_values[2,:], c='blue')
