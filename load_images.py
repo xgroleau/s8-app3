@@ -39,7 +39,7 @@ def histogrammes(indexes, im_coll):
         indexes = [indexes]
         
     fig = plt.figure()
-    ax = fig.subplots(len(indexes),3)
+    ax = fig.subplots(len(indexes),4)
 
 
     for num_images in range(len(indexes)):
@@ -47,6 +47,7 @@ def histogrammes(indexes, im_coll):
         imageRGB = np.array(Image.open(im_coll.image_folder + '\\' + im_coll.image_list[indexes[num_images]]))
         imageLab = skic.rgb2lab(imageRGB)
         imageHSV = skic.rgb2hsv(imageRGB)
+        imageLUV = skic.rgb2luv(imageRGB)
 
       
         # Number of bins per color channel
@@ -62,17 +63,23 @@ def histogrammes(indexes, im_coll):
         imageLabhist[:,:,1:2] = np.round((imageLab[:,:,1:2]-min_ab)*(n_bins-1)/(max_ab-min_ab)) #ab has all values between -110 and 110
 
         imageHSVhist = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
+
+        imageLUVhist = np.zeros(imageLUV.shape)
+        imageLUVhist[:,:,0] = np.round(imageLUV[:,:,0]/100*(n_bins - 1))
+        imageLUVhist[:, :, 1:2] = np.round((imageLUV[:, :, 1:2]+100)/200*(n_bins-1))
     
         # A list per color channel
         pixel_valuesRGB = np.zeros((3,n_bins))
         pixel_valuesLab = np.zeros((3,n_bins))
         pixel_valuesHSV = np.zeros((3,n_bins))
+        pixel_valuesLUV = np.zeros((3,n_bins))
     
         for i in range(n_bins):
             for j in range(3):
                 pixel_valuesRGB[j,i] = np.count_nonzero(imageRGB[:,:,j]==i)
                 pixel_valuesLab[j,i] = np.count_nonzero(imageLabhist[:,:,j]==i)
                 pixel_valuesHSV[j,i] = np.count_nonzero(imageHSVhist[:,:,j]==i)
+                pixel_valuesLUV[j,i] = np.count_nonzero(imageLUVhist[:,:,j]==i)
 
         skip = 5
         start = skip
@@ -98,6 +105,12 @@ def histogrammes(indexes, im_coll):
         ax[num_images, 2].scatter(range(start, end), pixel_valuesLab[2, start:end], c='violet')
         ax[num_images, 2].set(xlabel='pixels', ylabel='compte par valeur d\'intensité')
         ax[num_images, 2].set_title(f'histogramme LAB de {image_name}')
+
+        ax[num_images, 3].scatter(range(start, end), pixel_valuesLUV[0, start:end], c='green')
+        ax[num_images, 3].scatter(range(start, end), pixel_valuesLUV[1, start:end], c='magenta')
+        ax[num_images, 3].scatter(range(start, end), pixel_valuesLUV[2, start:end], c='purple')
+        ax[num_images, 3].set(xlabel='pixels', ylabel='compte par valeur d\'intensité')
+        ax[num_images, 3].set_title(f'histogramme LUV de {image_name}')
     return None
 
 
