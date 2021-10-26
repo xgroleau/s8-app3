@@ -146,14 +146,14 @@ def main():
     histogrammes(im_list_forest, forest)
 
     street = ImageCollection("street")
-    im_list_street = random_image_selector(6, forest)
-    images_display(im_list_street, forest)
-    histogrammes(im_list_street, forest)
+    im_list_street = random_image_selector(6, street)
+    images_display(im_list_street, street)
+    histogrammes(im_list_street, street)
     
     coast = ImageCollection("coast")
-    im_list_coast = random_image_selector(6, forest)
-    images_display(im_list_coast, forest)
-    histogrammes(im_list_coast, forest)
+    im_list_coast = random_image_selector(6, coast)
+    images_display(im_list_coast, coast)
+    histogrammes(im_list_coast, coast)
     plt.show()
 
 if __name__ == '__main__':
