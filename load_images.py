@@ -28,9 +28,7 @@ class ImageCollection:
         # Valeurs    [# image, hauteur, largeur, RGB]
         #images = np.array([np.array(Image.open(image)) for image in path])
 
-im_coll = ImageCollection("forest")
-
-def histogrammes(indexes=1):
+def histogrammes(indexes, im_coll):
     '''
     Takes images array and an index to pick the
     appropriate image
@@ -103,7 +101,7 @@ def histogrammes(indexes=1):
     return None
 
 
-def random_image_selector(number):
+def random_image_selector(number, im_coll):
     '''
     Génère une liste d'indexes pour choisir des images au hasard dans la liste
     image_list: liste de strings de 980 items
@@ -121,7 +119,7 @@ def random_image_selector(number):
     return np.sort(unique_indexes)
 
 
-def images_display(indexes=1):
+def images_display(indexes, im_coll):
     '''
     fonction pour afficher les images correspondant aux indices
 
@@ -142,13 +140,20 @@ def images_display(indexes=1):
 
 
 def main():
-    images_display(range(6))
-    histogrammes(range(6))
+    forest = ImageCollection("forest")
+    im_list_forest = random_image_selector(6, forest)
+    images_display(im_list_forest, forest)
+    histogrammes(im_list_forest, forest)
 
-    im_list = random_image_selector(6)
-    print(im_list)
-    images_display(im_list)
-    histogrammes(im_list)
+    street = ImageCollection("street")
+    im_list_street = random_image_selector(6, forest)
+    images_display(im_list_street, forest)
+    histogrammes(im_list_street, forest)
+    
+    coast = ImageCollection("coast")
+    im_list_coast = random_image_selector(6, forest)
+    images_display(im_list_coast, forest)
+    histogrammes(im_list_coast, forest)
     plt.show()
 
 if __name__ == '__main__':
