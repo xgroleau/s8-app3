@@ -4,7 +4,7 @@ import numpy as np
 
 def plot_1d(coasts, forests, streets, bins=100):
     plt.figure()
-    plt.hist([coasts, forests, streets], bins, alpha=0.5, label=["coasts", "forests", "streets"], color=["red", "green", "blue"])
+    plt.hist([coasts, forests, streets], bins, alpha=0.5, label=["coasts", "forests", "streets"], color=["blue", "green", "grey"])
 
 
 def plot_2d(coasts, forests, streets):
