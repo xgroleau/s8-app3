@@ -2,6 +2,7 @@
 Script for image visualization
 
 '''
+from typing import Callable, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,6 +12,7 @@ from PIL import Image
 from skimage import color as skic
 
 from color_transformation import rgb_to_cmyk
+from plot_utils import plot_1d
 
 
 class ImageCollection:
@@ -43,14 +45,12 @@ def histogrammes(indexes, im_coll):
     fig = plt.figure()
     ax = fig.subplots(len(indexes),4)
 
-
     for num_images in range(len(indexes)):
     
         imageRGB = np.array(Image.open(im_coll.image_folder + '\\' + im_coll.image_list[indexes[num_images]]))
         imageLab = skic.rgb2lab(imageRGB)
         imageHSV = skic.rgb2hsv(imageRGB)
         imageCMYK = rgb_to_cmyk(imageRGB)
-
       
         # Number of bins per color channel
         n_bins = 256
@@ -112,6 +112,7 @@ def histogrammes(indexes, im_coll):
         ax[num_images, 3].scatter(range(start, end), pixel_valuesCMYK[3, start:end], c='grey')
         ax[num_images, 3].set(xlabel='pixels', ylabel='compte par valeur d\'intensité')
         ax[num_images, 3].set_title(f'histogramme CMYK de {image_name}')
+
     return None
 
 
@@ -152,6 +153,13 @@ def images_display(indexes, im_coll):
         ax2[i].imshow(im) 
 
 
+def extract_param(num: int, im_coll: ImageCollection, fun: Callable[[np.ndarray], Union[float]]):
+    indexes = random_image_selector(num, im_coll)
+    val = np.zeros(len(indexes))
+    for i in range(len(indexes)):
+        imageRGB = np.array(Image.open(im_coll.image_folder + '\\' + im_coll.image_list[indexes[i]]))
+        val[i] = fun(imageRGB)
+    return val
 
 def main():
     forest = ImageCollection("forest")
@@ -168,6 +176,20 @@ def main():
     im_list_coast = random_image_selector(6, coast)
     images_display(im_list_coast, coast)
     histogrammes(im_list_coast, coast)
+
+    def diff_mean_ba(rgb):
+        imageLab = skic.rgb2lab(rgb)
+        b = np.mean(imageLab[:, :, 1])
+        a = np.mean(imageLab[:, :, 2])
+        return a - b
+
+    # Extract the mean of the blue color and plot the histogram of them
+    forest_mean = extract_param(200, forest, diff_mean_ba)
+    street_mean = extract_param(200, street, diff_mean_ba)
+    coast_mean = extract_param(200, coast, diff_mean_ba)
+
+    plot_1d(coast_mean, forest_mean, street_mean)
+
     plt.show()
 
 if __name__ == '__main__':
