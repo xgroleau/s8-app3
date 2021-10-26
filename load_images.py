@@ -11,19 +11,24 @@ from PIL import Image
 from skimage import color as skic
 
 
-class im_coll:
-    # liste de toutes les images
-    path = glob.glob(r".\baseDeDonneesImages\*.jpg")
-    image_folder = r".\baseDeDonneesImages"
-    image_list = os.listdir(image_folder)
-    # Filtrer pour juste garder les images
-    image_list = [i for i in image_list if '.jpg' in i]
+class ImageCollection:
+    def __init__(self, filter_name=None):
+        # liste de toutes les images
+        self.path = glob.glob(r".\baseDeDonneesImages\*.jpg")
+        self.image_folder = r".\baseDeDonneesImages"
+        self.image_list = os.listdir(self.image_folder)
+        # Filtrer pour juste garder les images
+        self.image_list = [i for i in self.image_list if '.jpg' in i]
 
-    # Créer un array qui contient toutes les images
-    # Dimensions [980, 256, 256, 3]
-    # Valeurs    [# image, hauteur, largeur, RGB]
-    #images = np.array([np.array(Image.open(image)) for image in path])
+        if filter_name:
+            self.image_list = list(filter(lambda name: filter_name in name, self.image_list))
 
+        # Créer un array qui contient toutes les images
+        # Dimensions [980, 256, 256, 3]
+        # Valeurs    [# image, hauteur, largeur, RGB]
+        #images = np.array([np.array(Image.open(image)) for image in path])
+
+im_coll = ImageCollection("forest")
 
 def histogrammes(indexes=1):
     '''
