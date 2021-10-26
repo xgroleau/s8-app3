@@ -177,16 +177,27 @@ def main():
     images_display(im_list_coast, coast)
     histogrammes(im_list_coast, coast)
 
-    def diff_mean_ba(rgb):
+    def extract_mean_ba(rgb):
         imageLab = skic.rgb2lab(rgb)
         b = np.mean(imageLab[:, :, 1])
         a = np.mean(imageLab[:, :, 2])
         return a - b
 
+    def extract_mean_saturation(rgb):
+        imagehsv = skic.rgb2hsv(rgb)
+        return np.mean(imagehsv[:, :, 1])
+
     # Extract the mean of the blue color and plot the histogram of them
-    forest_mean = extract_param(200, forest, diff_mean_ba)
-    street_mean = extract_param(200, street, diff_mean_ba)
-    coast_mean = extract_param(200, coast, diff_mean_ba)
+    forest_mean = extract_param(200, forest, extract_mean_ba)
+    street_mean = extract_param(200, street, extract_mean_ba)
+    coast_mean = extract_param(200, coast, extract_mean_ba)
+
+    plot_1d(coast_mean, forest_mean, street_mean)
+
+    # Extract the mean of the blue color and plot the histogram of them
+    forest_mean = extract_param(200, forest, extract_mean_saturation)
+    street_mean = extract_param(200, street, extract_mean_saturation)
+    coast_mean = extract_param(200, coast, extract_mean_saturation)
 
     plot_1d(coast_mean, forest_mean, street_mean)
 
