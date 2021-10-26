@@ -62,7 +62,8 @@ def histogrammes(indexes, im_coll):
         max_ab = 110
         imageLabhist = np.zeros(imageLab.shape)
         imageLabhist[:,:,0] = np.round(imageLab[:,:,0]*(n_bins-1)/max_L) #L has all values between 0 and 100
-        imageLabhist[:,:,1:2] = np.round((imageLab[:,:,1:2]-min_ab)*(n_bins-1)/(max_ab-min_ab)) #ab has all values between -110 and 110
+        imageLabhist[:,:,1] = np.round((imageLab[:,:,1]-min_ab)*(n_bins-1)/(max_ab-min_ab)) #ab has all values between -110 and 110
+        imageLabhist[:, :, 2] = np.round((imageLab[:, :, 2] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
 
         imageHSVhist = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
     
