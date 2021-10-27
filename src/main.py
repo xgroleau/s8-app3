@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 
 from src.images import random_image_selector
 from src.images.image_collection import ImageCollection, CategorizedImageCollection
-from src.params.extract_param import extract_mean_saturation, extract_rb_correlation, extract_var
-from src.params.param import param_1d, param_3d
+from src.params.extract_param import extract_var
+from src.params.param import param_3d
 from src.visualization import images_display
 from src.visualization.view_histogram import histogrammes
 
