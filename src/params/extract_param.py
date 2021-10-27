@@ -16,8 +16,7 @@ def extract_std(rgb):
     return stds
 
 
-def extract_var(rgb, test):
-    print(f"HELLO {test}")
+def extract_var(rgb):
     image = rgb
     variances = [np.var(image[:, :, 0]), np.var(image[:, :, 1]), np.var(image[:, :, 2])]
     return variances
@@ -64,3 +63,13 @@ def extract_rb_correlation(rgb):
     hist_g, bin_g = np.histogram(rgb[:, :, 1], 255)
     cross_correlation = np.corrcoef(hist_g, hist_r)
     return float(cross_correlation[0, 1])
+
+
+# Extract the peak of b minus a in LAB representation
+def extract_peak_b_minus_a(rgb):
+    imageLab = skic.rgb2lab(rgb)
+    b_hist, b_bin = np.histogram(imageLab[:, :, 1], 255)
+    a_hist, a_bin = np.histogram(imageLab[:, :, 2], 255)
+    b_hist_sliced = b_hist[100:200]
+    a_hist_sliced = a_hist[100:200]
+    return np.mean(b_hist_sliced - a_hist_sliced)

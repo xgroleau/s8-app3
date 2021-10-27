@@ -6,14 +6,15 @@ import matplotlib.pyplot as plt
 
 from src.images import random_image_selector
 from src.images.image_collection import ImageCollection, CategorizedImageCollection
-from src.params.extract_param import extract_var
-from src.params.param import param_3d
+from src.params.extract_param import extract_var, extract_mean_saturation, extract_rb_correlation, extract_mean_ba, \
+    extract_peak_b_minus_a
+from src.params.param import param_3d, param_1d
 from src.visualization import images_display
 from src.visualization.view_histogram import histogrammes
 
 
 def main():
-    view_hist = True
+    view_hist = False
     coast = ImageCollection(base_path=r"baseDeDonneesImages", filter_name="coast")
     street = ImageCollection(base_path=r"baseDeDonneesImages", filter_name="street")
     forest = ImageCollection(base_path=r"baseDeDonneesImages", filter_name="forest")
@@ -33,9 +34,9 @@ def main():
 
     categorized_collection = CategorizedImageCollection(coast, forest, street)
 
-    #param_1d(categorized_collection, extract_mean_saturation)
-    #param_1d(categorized_collection, extract_rb_correlation)
-    param_3d(categorized_collection, extract_var, title="Variance", test="World")
+    param_1d(categorized_collection, extract_mean_saturation)
+    param_1d(categorized_collection, extract_peak_b_minus_a)
+    param_3d(categorized_collection, extract_var, title="Variance")
 
     plt.show()
 
