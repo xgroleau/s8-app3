@@ -16,7 +16,8 @@ def extract_std(rgb):
     return stds
 
 
-def extract_var(rgb):
+def extract_var(rgb, test):
+    print(f"HELLO {test}")
     image = rgb
     variances = [np.var(image[:, :, 0]), np.var(image[:, :, 1]), np.var(image[:, :, 2])]
     return variances

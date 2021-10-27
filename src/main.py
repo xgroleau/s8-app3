@@ -35,7 +35,7 @@ def main():
 
     #param_1d(categorized_collection, extract_mean_saturation)
     #param_1d(categorized_collection, extract_rb_correlation)
-    param_3d(categorized_collection, extract_var, "Variance")
+    param_3d(categorized_collection, extract_var, title="Variance", test="World")
 
     plt.show()
 
