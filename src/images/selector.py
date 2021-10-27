@@ -1,5 +1,5 @@
-
 import numpy as np
+
 
 def random_image_selector(number, im_coll):
     '''

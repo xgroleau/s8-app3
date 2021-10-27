@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from PIL.Image import Image
+from PIL import Image
 
 
 def images_display(indexes, im_coll):
