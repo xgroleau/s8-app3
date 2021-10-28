@@ -5,10 +5,10 @@ from src.images import rgb_to_cmyk, smooth
 
 
 def extract_mean(rgb):
-    imageHSV = skic.rgb2hsv(rgb)
+    image = rgb_to_cmyk(rgb)
     n_bins = 256
-    image = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
-    means = [np.mean(image[:, :, 0]), np.mean(image[:, :, 1]), np.mean(image[:, :, 2])]
+    # image = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
+    means = [np.mean(image[:, :, 0]), np.mean(image[:, :, 1]), np.mean(image[:, :, 3])]
     return means
 
 
@@ -39,8 +39,8 @@ def extract_diff_mean(rgb):
 
 
 def extract_cov(rgb):
-    image = skic.rgb2lab(rgb)
-    stds = [np.cov(image[:, :, 0], image[:, :, 1])[0][1], np.cov(image[:, :, 1], image[:, :, 2])[0][1],
+    image = rgb_to_cmyk(rgb)
+    stds = [np.cov(image[:, :, 0], image[:, :, 3])[0][1], np.cov(image[:, :, 3], image[:, :, 2])[0][1],
             np.cov(image[:, :, 2], image[:, :, 0])[0][1]]
     return stds
 
@@ -88,58 +88,66 @@ def get_range_around_index(index_max, width=4):
     return start, end
 
 
-def extract_peak_color(rgb):
-    imageHSV = skic.rgb2hsv(rgb)
+def extract_peak_color(rgb, subset_start=50, subset_end=100):
+    image = rgb
     n_bins = 256
-    image = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
+
+    # min_L = 0
+    # max_L = 100
+    # min_ab = -110
+    # max_ab = 110
+    # image = np.zeros(imageLab.shape)
+    # image[:, :, 0] = np.round(
+    #     imageLab[:, :, 0] * (n_bins - 1) / max_L)  # L has all values between 0 and 100 skic.rgb2lab
+    # image[:, :, 1] = np.round(
+    #     (imageLab[:, :, 1] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
+    # image[:, :, 2] = np.round(
+    #     (imageLab[:, :, 2] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
+    # image = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
     pixel_values = np.zeros((4, n_bins))
     for j in range(3):
         for i in range(n_bins):
             pixel_values[j, i] = np.count_nonzero(image[:, :, j] == i)
 
-    subset_start = 0
-    subset_end = 256
     index_max_x = np.argmax(smooth(pixel_values[0, :], 5)[subset_start:subset_end]) + subset_start
     index_max_y = np.argmax(smooth(pixel_values[1, :], 5)[subset_start:subset_end]) + subset_start
     index_max_z = np.argmax(smooth(pixel_values[2, :], 5)[subset_start:subset_end]) + subset_start
 
-    peaks = [index_max_x,
-             index_max_y,
-             index_max_z]
+    peaks = [smooth(pixel_values[0, :], 5)[index_max_x],
+             smooth(pixel_values[1, :], 5)[index_max_y],
+             smooth(pixel_values[2, :], 5)[index_max_z]]
     return peaks
 
 
-def extract_mean_count_pixel_in_slice(rgb):
-    image = rgb_to_cmyk(rgb)
+def extract_mean_count_pixel_in_slice(rgb, subset_start, subset_end):
+    image = rgb
     n_bins = 256
     # image = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
 
     pixel_values = np.zeros((4, n_bins))
 
-    for j in range(4):
+    for j in range(3):
         for i in range(n_bins):
             pixel_values[j, i] = np.count_nonzero(image[:, :, j] == i)
 
-    subset_start = 5
-    subset_end = 256
-    index_max_x = np.argmax(smooth(pixel_values[2, :], 5)[subset_start:subset_end]) + subset_start
+    index_max_x = np.argmax(smooth(pixel_values[0, :], 5)[subset_start:subset_end]) + subset_start
     index_max_y = np.argmax(smooth(pixel_values[1, :], 5)[subset_start:subset_end]) + subset_start
     index_max_z = np.argmax(smooth(pixel_values[2, :], 5)[subset_start:subset_end]) + subset_start
     sx, ex = get_range_around_index(index_max_x)
     sy, ey = get_range_around_index(index_max_y)
     sz, ez = get_range_around_index(index_max_z)
 
-    means = [index_max_x,
-             pixel_values[2, sx:ex].mean(),
-             pixel_values[2, sx:ex].std()]
+    means = [np.sum(pixel_values[0, subset_start:subset_end]),
+             np.sum(pixel_values[1, subset_start:subset_end]),
+             np.sum(pixel_values[2, subset_start:subset_end])]
 
     return means
 
 
 def extract_param_pixels(rgb, dimension=0):
-    image = rgb_to_cmyk(rgb)
+    imageHSV = skic.rgb2hsv(rgb)
     n_bins = 256
-    # image = np.round(imageHSV*(n_bins-1)) # HSV has all values between 0 and 100 skic.rgb2hsv
+    image = np.round(imageHSV*(n_bins-1)) # HSV has all values between 0 and 100 skic.rgb2hsv
 
     # min_L = 0
     # max_L = 100
@@ -154,12 +162,12 @@ def extract_param_pixels(rgb, dimension=0):
     #     (imageLab[:, :, 2] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
     pixel_values = np.zeros((4, n_bins))
 
-    for j in range(4):
+    for j in range(3):
         for i in range(n_bins):
             pixel_values[j, i] = np.count_nonzero(image[:, :, j] == i)
 
-    subset_start = 5
-    subset_end = 251
+    subset_start = 0
+    subset_end = 256
     index_max_x = np.argmax(smooth(pixel_values[dimension, :], 5)[subset_start:subset_end]) + subset_start
     sx, ex = get_range_around_index(index_max_x)
 
@@ -171,9 +179,9 @@ def extract_param_pixels(rgb, dimension=0):
 
 
 def extract_cov_pixels(rgb, dimension=0):
-    image = rgb
+    imageHSV = skic.rgb2hsv(rgb)
     n_bins = 256
-    # image = np.round(imageHSV*(n_bins-1)) # HSV has all values between 0 and 100 skic.rgb2hsv
+    image = np.round(imageHSV*(n_bins-1)) # HSV has all values between 0 and 100 skic.rgb2hsv
 
     # min_L = 0
     # max_L = 100
@@ -202,3 +210,99 @@ def extract_cov_pixels(rgb, dimension=0):
              np.cov(pixel_values[0, sx:ex], pixel_values[2, sx:ex])[0, 1]]
 
     return means
+
+
+def extract_mean_hsv(rgb, dimension=0):
+    image = skic.rgb2hsv(rgb)
+    n_bins = 256
+    # image = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
+    means = np.mean(image[:, :, dimension])
+    return means
+
+
+def extract_peak_height_cmyk(rgb, subset_start=0, subset_end=256, dimension=0):
+    image = rgb_to_cmyk(rgb)
+    n_bins = 256
+
+    pixel_values = np.zeros((4, n_bins))
+    for j in range(4):
+        for i in range(n_bins):
+            pixel_values[j, i] = np.count_nonzero(image[:, :, j] == i)
+
+    index_max_x = np.argmax(smooth(pixel_values[dimension, :], 5)[subset_start:subset_end]) + subset_start
+
+    peak = smooth(pixel_values[dimension, :], 5)[index_max_x]
+
+    return peak
+
+
+def extract_peak_cmyk(rgb, subset_start=0, subset_end=256, dimension=0):
+    image = rgb_to_cmyk(rgb)
+    n_bins = 256
+
+    pixel_values = np.zeros((4, n_bins))
+    for j in range(4):
+        for i in range(n_bins):
+            pixel_values[j, i] = np.count_nonzero(image[:, :, j] == i)
+
+    index_max_x = np.argmax(smooth(pixel_values[dimension, :], 5)[subset_start:subset_end]) + subset_start
+
+    return index_max_x
+
+
+def extract_peak_lab(rgb, subset_start=0, subset_end=256, dimension=0):
+    imageLab = skic.rgb2lab(rgb)
+    n_bins = 256
+    min_L = 0
+    max_L = 100
+    min_ab = -110
+    max_ab = 110
+    image = np.zeros(imageLab.shape)
+    image[:, :, 0] = np.round(
+        imageLab[:, :, 0] * (n_bins - 1) / max_L)  # L has all values between 0 and 100 skic.rgb2lab
+    image[:, :, 1] = np.round(
+        (imageLab[:, :, 1] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
+    image[:, :, 2] = np.round(
+        (imageLab[:, :, 2] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
+
+    pixel_values = np.zeros((3, n_bins))
+    for j in range(3):
+        for i in range(n_bins):
+            pixel_values[j, i] = np.count_nonzero(image[:, :, j] == i)
+
+    index_max_x = np.argmax(smooth(pixel_values[dimension, :], 5)[subset_start:subset_end]) + subset_start
+
+    return index_max_x
+
+
+def extract_peak_hsv(rgb, subset_start=0, subset_end=256, dimension=0):
+    imageHSV = skic.rgb2hsv(rgb)
+    n_bins = 256
+    image = np.round(imageHSV*(n_bins-1)) # HSV has all values between 0 and 100 skic.rgb2hsv
+
+    pixel_values = np.zeros((3, n_bins))
+    for j in range(3):
+        for i in range(n_bins):
+            pixel_values[j, i] = np.count_nonzero(image[:, :, j] == i)
+
+    index_max_x = np.argmax(smooth(pixel_values[dimension, :], 5)[subset_start:subset_end]) + subset_start
+
+    return index_max_x
+
+
+def extract_peak_std_hsv(rgb, subset_start=0, subset_end=256, dimension=0):
+    imageHSV = skic.rgb2hsv(rgb)
+    n_bins = 256
+    image = np.round(imageHSV*(n_bins-1)) # HSV has all values between 0 and 100 skic.rgb2hsv
+
+    pixel_values = np.zeros((3, n_bins))
+    for j in range(3):
+        for i in range(n_bins):
+            pixel_values[j, i] = np.count_nonzero(image[:, :, j] == i)
+
+    index_max_x = np.argmax(smooth(pixel_values[dimension, :], 5)[subset_start:subset_end]) + subset_start
+
+    sx, ex = get_range_around_index(index_max_x)
+
+    std = pixel_values[dimension, sx:ex].std()
+    return std
