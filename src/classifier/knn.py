@@ -1,3 +1,5 @@
+from itertools import chain, repeat
+import random
 from typing import Dict
 
 from sklearn.cluster import KMeans as km
@@ -5,14 +7,27 @@ from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 
 
-def knn_classifier(classes: Dict[str, np.ndarray], n_neighbors=1):
-    knn_class = KNeighborsClassifier(n_neighbors=1)
+def knn_classifier(classes: Dict[str, np.ndarray], n_neighbors=5):
+    knn_class = KNeighborsClassifier(n_neighbors=n_neighbors)
     total_length = sum([len(x) for x in classes.values()])
-    x = np.zeros((total_length, 2))
-    y = np.zeros(len(classes))
-    for k, e in classes.items():
+    random_key = random.sample(classes.keys(), 1)[0]
+    try:
+        dim_param = classes[random_key].shape[1]
+    except:
+        dim_param = 1
 
+    # Flatten the dict in 2 array, one with values, one with labels
+    class_dict = {}
+    i = 0
+    for k in classes:
+        class_dict[k] = i
+        i += 1
 
-    test = np.array([[1, 1], [0, 0]])
-    knn_class.fit(test, [[1], [0]])
-    predictions = knn_class.predict(test)
+    x = np.zeros((total_length, dim_param))
+    i = 0
+    for val in chain.from_iterable(v for v in classes.values()):
+        x[i] = val
+        i += 1
+
+    y = np.fromiter(chain.from_iterable(repeat(class_dict[k], classes[k].shape[0]) for k in classes.keys()), dtype=float)
+    return knn_class.fit(x, y)
