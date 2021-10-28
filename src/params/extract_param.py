@@ -57,6 +57,12 @@ def extract_mean_saturation(rgb):
     return float(np.mean(imagehsv[:, :, 1]))
 
 
+# Extract the mean of the hue in an image
+def extract_mean_hue(rgb):
+    imagehsv = skic.rgb2hsv(rgb)
+    return float(np.mean(imagehsv[:, :, 0]))
+
+
 # Correlation between the values of blues and red (in RGB)
 def extract_rb_correlation(rgb):
     hist_r, bin_r = np.histogram(rgb[:, :, 0], 255)

@@ -7,6 +7,7 @@ def plot_1d(coasts, forests, streets, bins=100, title="", xlabel=""):
     plt.hist([coasts, forests, streets], bins, alpha=0.5, label=["coasts", "forests", "streets"], color=["blue", "green", "red"])
     plt.title(title)
     plt.xlabel(xlabel)
+    plt.legend()
 
 # WIP
 #def plot_2d(coasts, forests, streets, title="", xlabel="", ylabe):

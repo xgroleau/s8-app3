@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from src.images import random_image_selector
 from src.images.image_collection import ImageCollection, CategorizedImageCollection
 from src.params.extract_param import extract_var, extract_mean_saturation, extract_rb_correlation, extract_mean_ba, \
-    extract_peak_b_minus_a
+    extract_peak_b_minus_a, extract_mean_hue
 from src.params.param import param_3d, param_1d
 from src.visualization import images_display
 from src.visualization.view_histogram import histogrammes
@@ -15,9 +15,9 @@ from src.visualization.view_histogram import histogrammes
 
 def main():
     view_hist = False
-    coast = ImageCollection(base_path=r"baseDeDonneesImages", filter_name="coast")
-    street = ImageCollection(base_path=r"baseDeDonneesImages", filter_name="street")
-    forest = ImageCollection(base_path=r"baseDeDonneesImages", filter_name="forest")
+    coast = ImageCollection(base_path=r"../baseDeDonneesImages", filter_name="coast")
+    street = ImageCollection(base_path=r"../baseDeDonneesImages", filter_name="street")
+    forest = ImageCollection(base_path=r"../baseDeDonneesImages", filter_name="forest")
 
     if view_hist:
         im_list_coast = random_image_selector(6, coast)
@@ -34,7 +34,8 @@ def main():
 
     categorized_collection = CategorizedImageCollection(coast, forest, street)
 
-    param_1d(categorized_collection, extract_mean_saturation)
+    param_1d(categorized_collection, extract_mean_hue, title="Hue")
+    param_1d(categorized_collection, extract_mean_saturation, title="Saturation")
     param_1d(categorized_collection, extract_peak_b_minus_a)
     param_3d(categorized_collection, extract_var, title="Variance")
 
