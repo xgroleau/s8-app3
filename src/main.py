@@ -39,7 +39,7 @@ def main():
     #param_1d(categorized_collection, extract_peak_b_minus_a)
     var_param = param_3d(categorized_collection, extract_var, title="Variance")
 
-    knn_classifier(saturation_param, n_neighbors=5)
+    knn_classifier(var_param, n_neighbors=5)
 
 
     plt.show()
