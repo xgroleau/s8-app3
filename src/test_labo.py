@@ -35,7 +35,7 @@ class_labels = np.zeros(ndata)
 class_labels[range(len(C1), 2*len(C1))] = 1
 class_labels[range(2*len(C1), ndata)] = 2
 
-classes_orig = np.array([classifier.fit(d) for d in data])
+classes_orig = np.array([classifier.fit(d, likelihood="gaussian", cost_matrix=np.array([[1,1,1],[1,1,1],[1,1,1]])) for d in data])
 error_class = 6  #optionnel, assignation d'une classe différente à toutes les données en erreur, aide pour la visualisation
 error_indexes = calc_erreur_classification(class_labels, classes_orig)
 #error_indexes = np.expand_dims(error_indexes, 1)

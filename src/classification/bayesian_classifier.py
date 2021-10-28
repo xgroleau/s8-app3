@@ -24,7 +24,7 @@ class BayesianClassifier:
         self._probability_density = [{'hist': val[0], 'edges': val[1]} for val in
                                      self._probability_density]
 
-    def fit(self, parameters, likelihood='gaussian', cost_matrix=None) -> str:
+    def fit(self, parameters, likelihood='arbitrary', cost_matrix=None) -> str:
         if cost_matrix is None:
             cost_matrix = np.ones((self._classes_count, self._classes_count))
 
