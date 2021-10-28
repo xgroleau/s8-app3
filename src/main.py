@@ -6,8 +6,9 @@ import os
 import sys
 import matplotlib.pyplot as plt
 
+from src.classifier.knn import knn_classifier
 from src.images import random_image_selector
-from src.images.image_collection import ImageCollection, CategorizedImageCollection
+from src.images.image_collection import ImageCollection
 from src.params.extract_param import extract_var, extract_mean_saturation, extract_rb_correlation, extract_mean_ba, \
     extract_peak_b_minus_a, extract_mean_hue
 from src.params.param import param_3d, param_1d
@@ -37,12 +38,14 @@ def main():
         images_display(im_list_street, street)
         histogrammes(im_list_street, street)
 
-    categorized_collection = CategorizedImageCollection(coast, forest, street)
+    categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
-    param_1d(categorized_collection, extract_mean_hue, title="Hue")
-    param_1d(categorized_collection, extract_mean_saturation, title="Saturation")
-    param_1d(categorized_collection, extract_peak_b_minus_a)
-    param_3d(categorized_collection, extract_var, title="Variance")
+    saturation_param = param_1d(categorized_collection, extract_mean_saturation)
+    #param_1d(categorized_collection, extract_peak_b_minus_a)
+    var_param = param_3d(categorized_collection, extract_var, title="Variance")
+
+    knn_classifier(var_param, n_neighbors=5)
+
 
     plt.show()
 

@@ -1,10 +1,12 @@
+from typing import Dict
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_1d(coasts, forests, streets, bins=100, title="", xlabel=""):
+def plot_1d(params: Dict[str, np.ndarray], bins=100, title="", xlabel="", colors=None):
     plt.figure()
-    plt.hist([coasts, forests, streets], bins, alpha=0.5, label=["coasts", "forests", "streets"], color=["blue", "green", "red"])
+    plt.hist(params.values(), bins, alpha=0.5, label=[*params.keys()])
     plt.title(title)
     plt.xlabel(xlabel)
     plt.legend()
@@ -15,13 +17,13 @@ def plot_1d(coasts, forests, streets, bins=100, title="", xlabel=""):
 #    ax.scatter(coasts, forests, streets)
 
 
-def plot_3d(coasts, forests, streets, title="", xlabel="x", ylabel="y", zlabel="z"):
+def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zlabel="z", colors=None):
     plt.figure()
     ax = plt.axes(projection='3d')
-    ax.scatter(coasts[:,0], coasts[:,1], coasts[:,2], alpha=0.5, label="coasts", color="blue")
-    ax.scatter(forests[:,0], forests[:,1], forests[:,2], alpha=0.5, label="forests", color="green")
-    ax.scatter(streets[:,0], streets[:,1], streets[:,2], alpha=0.5, label="streets", color="red")
+    for k, e in params.items():
+        ax.scatter(e[:, 0], e[:, 1], e[:, 2], alpha=0.5, label=k)
     plt.title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_zlabel(zlabel)
+    ax.legend()

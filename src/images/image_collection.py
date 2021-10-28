@@ -15,10 +15,3 @@ class ImageCollection:
         if filter_name:
             self.image_list = list(filter(lambda name: filter_name in name, self.image_list))
 
-
-@dataclass
-class CategorizedImageCollection:
-    coast: ImageCollection
-    forest: ImageCollection
-    street: ImageCollection
-
