@@ -1,5 +1,5 @@
-from PIL import Image
 import numpy as np
+
 
 def rgb_to_cmyk(rgb_img):
     # Make float and divide by 255 to give BGRdash
@@ -20,3 +20,9 @@ def rgb_to_cmyk(rgb_img):
 
     # Combine 4 channels into single image and re-scale back up to uint8
     return (np.dstack((C, M, Y, K)) * 255).astype(np.uint8)
+
+
+def smooth(y, box_pts):
+    box = np.ones(box_pts)/box_pts
+    y_smooth = np.convolve(y, box, mode='same')
+    return y_smooth
