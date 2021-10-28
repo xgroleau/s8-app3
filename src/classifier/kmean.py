@@ -2,11 +2,11 @@ from itertools import chain, repeat
 import random
 from typing import Dict
 
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.cluster import KMeans
 import numpy as np
 
 
-def format_knn(classes: Dict[str, np.ndarray]):
+def format_kmean(classes: Dict[str, np.ndarray]):
     total_length = sum([len(x) for x in classes.values()])
     random_key = random.sample(classes.keys(), 1)[0]
     try:
@@ -32,8 +32,7 @@ def format_knn(classes: Dict[str, np.ndarray]):
     return x, y
 
 
-def knn_classifier(classes: Dict[str, np.ndarray], n_neighbors=5):
-    x, y = format_knn(classes)
-    knn_class = KNeighborsClassifier(n_neighbors=n_neighbors)
-    return knn_class.fit(x, y)
-
+def kmean_clustering(classes: Dict[str, np.ndarray], n_cluster=5):
+    x, y = format_kmean(classes)
+    knn_class = KMeans(n_cluster)
+    return knn_class.fit(x)
