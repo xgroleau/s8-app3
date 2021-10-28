@@ -2,6 +2,8 @@
 Script for image visualization
 
 '''
+import os
+import sys
 import matplotlib.pyplot as plt
 
 from src.images import random_image_selector
@@ -12,12 +14,15 @@ from src.params.param import param_3d, param_1d
 from src.visualization import images_display
 from src.visualization.view_histogram import histogrammes
 
+sys.path.append('../')
+CDIR = os.path.dirname(os.path.realpath(__file__))
+images_path = os.path.join(CDIR, '../baseDeDonneesImages')
 
 def main():
     view_hist = False
-    coast = ImageCollection(base_path=r"../baseDeDonneesImages", filter_name="coast")
-    street = ImageCollection(base_path=r"../baseDeDonneesImages", filter_name="street")
-    forest = ImageCollection(base_path=r"../baseDeDonneesImages", filter_name="forest")
+    coast = ImageCollection(base_path=images_path, filter_name="coast")
+    forest = ImageCollection(base_path=images_path, filter_name="forest")
+    street = ImageCollection(base_path=images_path, filter_name="street")
 
     if view_hist:
         im_list_coast = random_image_selector(6, coast)
