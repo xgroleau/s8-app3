@@ -1,10 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse
 from matplotlib import cm
 
 # Import from text files
-from src.classification.bayesian_classifier import BayesianClassifier
+from src.classifier.bayesian_classifier import BayesianClassifier
 
 
 def calc_erreur_classification(original_data, classified_data):
@@ -14,9 +13,9 @@ def calc_erreur_classification(original_data, classified_data):
 
     return indexes
 
-C1 = np.loadtxt('test/C1.txt')
-C2 = np.loadtxt('test/C2.txt')
-C3 = np.loadtxt('test/C3.txt')
+C1 = np.loadtxt('labo_dataset/C1.txt')
+C2 = np.loadtxt('labo_dataset/C2.txt')
+C3 = np.loadtxt('labo_dataset/C3.txt')
 
 training_set = {
     "C1": C1,
