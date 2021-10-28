@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import scipy.stats as stats
 
 
 class BayesianClassifier:
@@ -14,20 +14,28 @@ class BayesianClassifier:
         # Extract apriori probability for each class based on number of samples or user-provided probabilities P(C_i)
         self._apriori = apriori if apriori is not None else self._training_set_counts / self._total_training_set_counts
 
+        self._normal_distributions = [
+            stats.multivariate_normal(mean=np.mean(c_val, axis=0), cov=np.cov(np.transpose(c_val))) for c_val in
+            training_set.values()]
+
         # Extract N-dimension probability density for each class P(x|C_i)
         self._probability_density = [np.histogramdd(c_val, bins=bins, density=True) for c_val in
                                      training_set.values()]
         self._probability_density = [{'hist': val[0], 'edges': val[1]} for val in
                                      self._probability_density]
 
-        print('X')
-
-    def fit(self, parameters, cost_matrix=None) -> str:
+    def fit(self, parameters, likelihood='gaussian', cost_matrix=None) -> str:
         if cost_matrix is None:
             cost_matrix = np.ones((self._classes_count, self._classes_count))
 
         risk = np.zeros(self._classes_count)
-        likelihoods = [self._get_likelihood(parameters, i) for i in range(self._classes_count)]
+
+        if likelihood == 'gaussian':
+            likelihoods = [self._get_gaussian_likelihood(parameters, i) for i in range(self._classes_count)]
+        elif likelihood == 'arbitrary':
+            likelihoods = [self._get_arbitrary_likelihood(parameters, i) for i in range(self._classes_count)]
+        else:
+            raise ValueError(f'Likelihood: {likelihood} not supported. Supported values are "gaussian" or "arbitrary"')
 
         for i in range(self._classes_count):
             for j in range(self._classes_count):
@@ -38,7 +46,7 @@ class BayesianClassifier:
 
         return np.argmin(risk)
 
-    def _get_likelihood(self, parameters, class_idx):
+    def _get_arbitrary_likelihood(self, parameters, class_idx):
         bin_idx = np.zeros(parameters.shape, dtype=np.int64)
         for i in range(parameters.shape[0]):
             bin_idx[i] = self._probability_density[class_idx]['edges'][i].searchsorted(parameters[i], 'left')
@@ -48,3 +56,6 @@ class BayesianClassifier:
             return 0
         else:
             return self._probability_density[class_idx]['hist'].item(tuple(bin_idx))
+
+    def _get_gaussian_likelihood(self, parameters, class_idx):
+        return self._normal_distributions[class_idx].pdf(parameters)
