@@ -11,10 +11,15 @@ def plot_1d(params: Dict[str, np.ndarray], bins=100, title="", xlabel="", colors
     plt.xlabel(xlabel)
     plt.legend()
 
-# WIP
-#def plot_2d(coasts, forests, streets, title="", xlabel="", ylabe):
-#    ax = plt.axes(projection='3d')
-#    ax.scatter(coasts, forests, streets)
+
+def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="", ylabel=""):
+    plt.figure()
+    for k, e in params.items():
+        plt.scatter(e[:, 0], e[:, 1], alpha=0.5, label=k)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.legend()
 
 
 def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zlabel="z", colors=None):

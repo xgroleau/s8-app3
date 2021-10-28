@@ -4,7 +4,7 @@ import numpy as np
 
 from .map_param import map_param
 from ..images import ImageCollection
-from ..visualization import plot_1d, plot_3d
+from ..visualization import plot_1d, plot_3d, plot_2d
 
 
 def get_2d_reshaped(arr: np.ndarray):
@@ -34,12 +34,23 @@ def param_1d(img_coll: Dict[str, ImageCollection], param_extraction: Callable[[n
 
 
 def param_nd(img_coll: Dict[str, ImageCollection], param_extraction: List[Callable[[np.ndarray], Union[int, float, np.ndarray]]],
-                  num_images=200, *args, **kwargs) -> Dict[str, np.ndarray]:
+                  num_images=200, title="", xlabel="x", ylabel="y", zlabel="z", *args, **kwargs) -> Dict[str, np.ndarray]:
     params = []
     for param_fun in param_extraction:
         params.append({k: map_param(num_images, v, param_fun, *args, **kwargs) for k, v in img_coll.items()})
 
-    return group_classes(params)
+    grouped_classes = group_classes(params)
+
+    if len(param_extraction) == 1:
+        plot_1d(grouped_classes, title, xlabel)
+    elif len(param_extraction) == 2:
+        plot_2d(grouped_classes, title, xlabel, ylabel)
+    elif len(param_extraction) == 3:
+        plot_3d(grouped_classes, title, xlabel, ylabel, zlabel)
+    else:
+        print("Plot not supported")
+
+    return grouped_classes
 
 
 def param_3d(img_coll: Dict[str, ImageCollection],
