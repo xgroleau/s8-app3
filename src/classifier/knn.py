@@ -6,25 +6,6 @@ from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 
 
-def get_2d_reshaped(arr: np.ndarray):
-    if len(arr.shape) > 1:
-        return arr
-    else:
-        return arr.reshape(-1, 1)
-
-
-def group_classes(list_classes: List[Dict[str, np.ndarray]]):
-    grouped_classes = {}
-    for e_class in list_classes:
-        for key in e_class:
-            if key in grouped_classes:
-                grouped_classes[key] = np.concatenate((grouped_classes[key], get_2d_reshaped(e_class[key])), axis=1)
-            else:
-                grouped_classes[key] = get_2d_reshaped(e_class[key])
-
-    return grouped_classes
-
-
 def format_knn(classes: Dict[str, np.ndarray]):
     total_length = sum([len(x) for x in classes.values()])
     random_key = random.sample(classes.keys(), 1)[0]
