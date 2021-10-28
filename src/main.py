@@ -4,7 +4,7 @@ Script for image visualization
 '''
 import matplotlib.pyplot as plt
 
-from src.classifier.knn import knn_classifier
+from src.classifier.knn import knn_classifier,  group_classes
 from src.images import random_image_selector
 from src.images.image_collection import ImageCollection
 from src.params.extract_param import extract_var, extract_mean_saturation, extract_rb_correlation, extract_mean_ba, \
@@ -36,9 +36,12 @@ def main():
     categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
     saturation_param = param_1d(categorized_collection, extract_mean_saturation)
-    #param_1d(categorized_collection, extract_peak_b_minus_a)
+    # param_1d(categorized_collection, extract_peak_b_minus_a)
     var_param = param_3d(categorized_collection, extract_var, title="Variance")
 
+    params = [saturation_param, var_param]
+
+    grouped_classes = group_classes(params)
     knn_classifier(var_param, n_neighbors=5)
 
 
