@@ -30,6 +30,7 @@ def param_3d(img_coll: CategorizedImageCollection,
 
     plot_3d(coast_param, forest_param, street_param, title, xlabel, ylabel, zlabel)
 
+
 def get_images(img_coll: CategorizedImageCollection,
                   param_extraction: Callable[[np.ndarray], Union[int, float, np.ndarray]],
                   num_images=200, title="", xlabel="x", ylabel="y", zlabel="z", *args, **kwargs):

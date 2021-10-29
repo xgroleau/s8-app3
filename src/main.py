@@ -33,9 +33,9 @@ def main():
 
     categorized_collection = CategorizedImageCollection(coast, forest, street)
 
-    param_1d(categorized_collection, extract_peak_hsv, dimension=0)
+    param_1d(categorized_collection, extract_peak_hsv, subset_start=5, dimension=0)
     param_1d(categorized_collection, extract_peak_std_hsv, dimension=0)
-    param_1d(categorized_collection, extract_peak_cmyk, dimension=2)
+    param_1d(categorized_collection, extract_peak_cmyk, subset_start=5, dimension=2)
     param_1d(categorized_collection, extract_peak_lab, subset_start=100, subset_end=150, dimension=1)
     param_1d(categorized_collection, extract_peak_lab, subset_start=100, subset_end=150, dimension=2)
     param_1d(categorized_collection, extract_peak_height_cmyk, subset_start=0, subset_end=50, dimension=0)
