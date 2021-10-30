@@ -48,6 +48,6 @@ class_representant = kmean_clustering(params, n_cluster=60)
 kNN = KNNClassifier(n_neighbors=20)
 kNN.fit(class_representant)
 
-create_confusion_matrix(params, kNN.predict, display=True, likelihood='gaussian', categories=categories)
+create_confusion_matrix(params, kNN.predict, display=True, likelihood='gaussian')
 
 plt.show()
