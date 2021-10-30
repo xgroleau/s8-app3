@@ -10,8 +10,10 @@ from .map_param import map_param
 from ..images import ImageCollection
 from ..visualization import plot_1d, plot_3d
 
-ParamExtractor_t = Union[Callable[[np.ndarray], Union[int, float, np.ndarray]], Tuple[
-    Callable[[np.ndarray], Union[int, float, np.ndarray]], Dict]]
+ParamExtractor_t = Union[
+    Callable[[np.ndarray], Union[int, float, np.ndarray]],
+    Tuple[Callable[[np.ndarray], Union[int, float, np.ndarray]], Dict]
+]
 
 
 def get_2d_reshaped(arr: np.ndarray):

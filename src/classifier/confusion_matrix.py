@@ -16,11 +16,14 @@ def create_confusion_matrix(params: Dict[str, np.ndarray], fit_function: Callabl
     fitted_labels = fit_function(flattened_params, *args, **kwargs)
 
     confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels)
+    confusion_matrix_normalized = metrics.confusion_matrix(expected_labels, fitted_labels, normalize="true")
 
     if display:
-        plt.figure()
         display = metrics.ConfusionMatrixDisplay(confusion_matrix, display_labels=labels)
+        display_normalized = metrics.ConfusionMatrixDisplay(confusion_matrix_normalized, display_labels=labels)
+
         display.plot()
-        plt.show()
+        display_normalized.plot()
+
 
     return confusion_matrix
