@@ -49,10 +49,10 @@ def param_nd(img_coll: Dict[str, ImageCollection],
     params = []
     for param_fun in param_extraction:
         if isinstance(param_fun, tuple):
-            params = {k: map_param(num_images, v, param_fun[0], *args, **{**param_fun[1], **kwargs}) for
-                      k, v in img_coll.items()}
+            params.append({k: map_param(num_images, v, param_fun[0], *args, **{**param_fun[1], **kwargs}) for
+                      k, v in img_coll.items()})
         else:
-            params = {k: map_param(num_images, v, param_fun, *args, **kwargs) for k, v in img_coll.items()}
+            params.append({k: map_param(num_images, v, param_fun, *args, **kwargs) for k, v in img_coll.items()})
 
     return group_classes(params)
 

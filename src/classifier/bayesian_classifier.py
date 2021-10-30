@@ -49,7 +49,7 @@ class BayesianClassifier:
 
                 risk[i] += cost_matrix[i, j] * likelihoods[j] * self._apriori[j]
 
-        return np.argmin(risk)
+        return self._class_labels[np.argmin(risk)]
 
     def _get_arbitrary_likelihood(self, parameters, class_idx):
         bin_idx = np.zeros(parameters.shape, dtype=np.int64)
