@@ -44,10 +44,10 @@ params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, thresh
 params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
 params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
 
-class_representant = kmean_clustering(params, n_cluster=60)
-kNN = KNNClassifier(n_neighbors=20)
+class_representant = kmean_clustering(params, n_cluster=50)
+kNN = KNNClassifier(n_neighbors=40)
 kNN.fit(class_representant)
 
-create_confusion_matrix(params, kNN.predict, display=True, likelihood='gaussian')
+create_confusion_matrix(params, kNN.predict, display=True)
 
 plt.show()

@@ -9,6 +9,7 @@ from src.classifier.subclasses import aggregate_subclasses
 def create_confusion_matrix(params: Dict[str, np.ndarray], fit_function: Callable[[np.ndarray, any, any], str],
                             display=False,
                             agregate=False,
+                            normalize=None,
                             *args,
                             **kwargs):
 
@@ -24,7 +25,7 @@ def create_confusion_matrix(params: Dict[str, np.ndarray], fit_function: Callabl
         # Convert to aggregated version and remove duplicates
         labels = list(dict.fromkeys(aggregate_subclasses(labels)))
 
-    confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels, labels=labels, normalize=None)
+    confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels, labels=labels, normalize=normalize)
 
     if display:
         display = metrics.ConfusionMatrixDisplay(confusion_matrix, display_labels=labels)
