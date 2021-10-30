@@ -3,6 +3,7 @@ import sys
 
 from src.classifier.bayesian_classifier import BayesianClassifier
 from src.classifier.confusion_matrix import create_confusion_matrix
+from src.classifier.subclasses import subclass, subclass_param_threshold
 from src.images import ImageCollection
 from src.params.extract_param import *
 from src.params.param import param_nd
@@ -44,8 +45,20 @@ a_file.close()
 
 bayes = BayesianClassifier(params, bins=1)
 
-create_confusion_matrix(params, bayes.fit_multiple, display=True, likelihood='gaussian')
+#create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
+#create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
-plot_sub_params(params, (0, 3, 5), param_labels)
+plot_sub_params(params, (0, 1, 3), param_labels)
+plot_sub_params(params, 3, param_labels)
+params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
+params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
+params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
+#params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=3, threshold=120)
+plot_sub_params(params, 3, param_labels)
+plot_sub_params(params, (0, 1, 3), param_labels)
+
+bayes2 = BayesianClassifier(params, bins=1)
+create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=False, likelihood='gaussian')
+create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
 plt.show()

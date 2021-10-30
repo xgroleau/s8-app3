@@ -45,13 +45,13 @@ def main():
     categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
     param_1d(categorized_collection, (extract_peak_hsv, {'subset_start': 5, 'dimension': 0}))
-    param_1d(categorized_collection, extract_peak_std_hsv, dimension=0)
-    param_1d(categorized_collection, extract_peak_cmyk, subset_start=5, dimension=2)
-    param_1d(categorized_collection, extract_peak_lab, subset_start=100, subset_end=150, dimension=1)
-    param_1d(categorized_collection, extract_peak_lab, subset_start=100, subset_end=150, dimension=2)
-    param_1d(categorized_collection, extract_peak_height_cmyk, subset_start=0, subset_end=50, dimension=0)
-    param_1d(categorized_collection, extract_peak_height_cmyk, subset_start=0, subset_end=50, dimension=1)
-    param_1d(categorized_collection, extract_mean_hsv, dimension=1)
+    # param_1d(categorized_collection, extract_peak_std_hsv, dimension=0)
+    # param_1d(categorized_collection, extract_peak_cmyk, subset_start=5, dimension=2)
+    # param_1d(categorized_collection, extract_peak_lab, subset_start=100, subset_end=150, dimension=1)
+    # param_1d(categorized_collection, extract_peak_lab, subset_start=100, subset_end=150, dimension=2)
+    # param_1d(categorized_collection, extract_peak_height_cmyk, subset_start=0, subset_end=50, dimension=0)
+    # param_1d(categorized_collection, extract_peak_height_cmyk, subset_start=0, subset_end=50, dimension=1)
+    # param_1d(categorized_collection, extract_mean_hsv, dimension=1)
 
     # param_3d(categorized_collection, extract_mean_count_pixel_in_slice, subset_start=0, subset_end=75, num_images=-1, title="RGB Slice sum 0 - 75")
     # param_3d(categorized_collection, extract_mean_count_pixel_in_slice, subset_start=75, subset_end=250, num_images=-1, title="RGB Slice sum 75 - 250")

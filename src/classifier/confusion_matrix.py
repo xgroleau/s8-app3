@@ -3,9 +3,12 @@ import numpy as np
 import sklearn.metrics as metrics
 import matplotlib.pyplot as plt
 
+from src.classifier.subclasses import aggregate_subclasses
+
 
 def create_confusion_matrix(params: Dict[str, np.ndarray], fit_function: Callable[[np.ndarray, any, any], str],
                             display=False,
+                            agregate=False,
                             *args,
                             **kwargs):
 
@@ -15,15 +18,16 @@ def create_confusion_matrix(params: Dict[str, np.ndarray], fit_function: Callabl
 
     fitted_labels = fit_function(flattened_params, *args, **kwargs)
 
-    confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels)
-    confusion_matrix_normalized = metrics.confusion_matrix(expected_labels, fitted_labels, normalize="true")
+    if agregate:
+        expected_labels = aggregate_subclasses(expected_labels)
+        fitted_labels = aggregate_subclasses(fitted_labels)
+        # Convert to aggregated version and remove duplicates
+        labels = list(dict.fromkeys(aggregate_subclasses(labels)))
+
+    confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels, labels=labels, normalize=None)
 
     if display:
         display = metrics.ConfusionMatrixDisplay(confusion_matrix, display_labels=labels)
-        display_normalized = metrics.ConfusionMatrixDisplay(confusion_matrix_normalized, display_labels=labels)
-
         display.plot()
-        display_normalized.plot()
-
 
     return confusion_matrix
