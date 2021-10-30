@@ -47,7 +47,9 @@ def param_nd(img_coll: Dict[str, ImageCollection],
              param_extraction: List[ParamExtractor_t],
              num_images=200, *args, **kwargs) -> Dict[str, np.ndarray]:
     params = []
-    for param_fun in param_extraction:
+    for i, param_fun in enumerate(param_extraction):
+        print(f'Extracting param #{i}')
+
         if isinstance(param_fun, tuple):
             params.append({k: map_param(num_images, v, param_fun[0], *args, **{**param_fun[1], **kwargs}) for
                       k, v in img_coll.items()})
