@@ -35,13 +35,14 @@ def format_knn(classes: Dict[str, np.ndarray]):
 class KNNClassifier:
     def __init__(self, n_neighbors=5):
         self.classifier = KNeighborsClassifier(n_neighbors=n_neighbors)
+        self.labels = []
 
     def fit(self, classes: Dict[str, np.ndarray]):
         x, y = format_knn(classes)
         self.classifier.fit(x, y)
+        self.labels = list(classes.keys())
 
-    def predict(self, parameters, categories, *args, **kwargs):
+    def predict(self, parameters, *args, **kwargs):
         predictions = self.classifier.predict(parameters)
-        labels = [categories[e] for e in predictions]
-        return labels
+        return [self.labels[int(e)] for e in predictions]
 

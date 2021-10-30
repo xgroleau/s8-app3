@@ -11,7 +11,7 @@ def subclass_param_threshold(params: np.ndarray, param_idx: int, threshold: floa
 
 
 def subclass(params: Dict[str, np.ndarray], base_class: str,
-             fun: Callable[[np.ndarray, any, any], List[np.ndarray]], *args, **kwargs):
+             fun: Callable[[np.ndarray, any, any], List[np.ndarray]], *args, **kwargs) -> Dict[str, np.ndarray]:
     new_params = copy.deepcopy(params)
     new_params.pop(base_class)
 

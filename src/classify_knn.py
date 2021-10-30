@@ -5,6 +5,7 @@ from src.classifier.bayesian_classifier import BayesianClassifier
 from src.classifier.confusion_matrix import create_confusion_matrix
 from src.classifier.kmean import kmean_clustering
 from src.classifier.knn import KNNClassifier
+from src.classifier.subclasses import subclass, subclass_param_threshold
 from src.images import ImageCollection
 from src.params.extract_param import *
 from src.params.param import param_nd
@@ -39,11 +40,14 @@ a_file = open("params.pkl", "rb")
 params = pkl.load(a_file)
 a_file.close()
 
+params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
+params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
+params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
+
 class_representant = kmean_clustering(params, n_cluster=60)
 kNN = KNNClassifier(n_neighbors=20)
 kNN.fit(class_representant)
-categories = {0: "coast", 1: "forest", 2: "street"}
+
 create_confusion_matrix(params, kNN.predict, display=True, likelihood='gaussian', categories=categories)
 
-
-print(f'DONE:')
+plt.show()
