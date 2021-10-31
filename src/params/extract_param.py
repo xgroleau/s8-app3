@@ -235,6 +235,62 @@ def extract_peak_height_cmyk(rgb, subset_start=0, subset_end=256, dimension=0):
     return peak
 
 
+def extractor_test(rgb, subset_start=0, subset_end=256, dimension=0):
+    # imageCMYK = rgb_to_cmyk(rgb)
+    # imageHSV = skic.rgb2hsv(rgb)
+    imageYuv = skic.rgb2yuv(rgb)
+    n_bins = 256
+    # image = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
+
+    # max_L = 100
+    # min_ab = -110
+    # max_ab = 110
+    # image = np.zeros(imageLab.shape)
+    # image[:, :, 0] = np.round(
+    #     imageLab[:, :, 0] * (n_bins - 1) / max_L)  # L has all values between 0 and 100 skic.rgb2lab
+    # image[:, :, 1] = np.round(
+    #     (imageLab[:, :, 1] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
+    # image[:, :, 2] = np.round(
+    #     (imageLab[:, :, 2] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
+    # pixel_values_CMYK = np.zeros((4, n_bins))
+    # pixel_values_RGB = np.zeros((3, n_bins))
+    # pixel_values_HSV = np.zeros((3, n_bins))
+    # pixel_values_LAB = np.zeros((3, n_bins))
+    value_3 = 0
+    # for i in range(len(rgb)):
+    #     for j in range(len(rgb[i])):
+    #         if rgb[i, j, 0] < 70 and rgb[i, j, 1] < 70 and rgb[i, j, 2] < 70:
+    #             #         if (rgb[i, j, 0] > 200 and rgb[i, j, 1] > 200 and rgb[i, j, 2] > 200):
+    #             value_3 += 1
+    # if (rgb[i, j, 0] < rgb[i, j, 2] and rgb[i, j, 0]*2.2 > rgb[i, j, 2] and rgb[i, j, 0] > rgb[i, j, 1] - 7 and rgb[i, j, 0] < rgb[i, j, 1] + 7 and rgb[i, j, 0] < 150):
+    #     value_3 += 1
+    # for j in range(4):
+    #     for i in range(n_bins):
+    #         if j < 3:
+    #             pixel_values_RGB[j, i] = np.count_nonzero(rgb[:, :, j] == i)
+    #         #     pixel_values_LAB[j, i] = np.count_nonzero(image[:, :, j] == i)
+    #         #     pixel_values_HSV[j, i] = np.count_nonzero(image[:, :, j] == i)
+    #         pixel_values_CMYK[j, i] = np.count_nonzero(imageCMYK[:, :, j] == i)
+
+    # index_max_x = np.argmax(smooth(pixel_values_CMYK[0, :], 5)[0:50])
+    # index_max_y = np.argmax(smooth(pixel_values_CMYK[1, :], 5)[0:50])
+
+    imageYuv.reshape(-1, 3)
+    unique, counts = np.unique(imageYuv.reshape(-1, 3), axis=0, return_counts=True)
+    value_1, value_2, value_3 = unique[np.argmax(counts)]
+    return value_3
+
+
+def extractor_unique(rgb, dimension=0):
+    image = skic.rgb2xyz(rgb)
+
+    image.reshape(-1, 3)
+    unique, counts = np.unique(image.reshape(-1, 3), axis=0, return_counts=True)
+    value = [0, 0, 0]
+    value[0], value[1], value[2] = unique[np.argmax(counts)]
+    return value[dimension]
+
+
 def extract_peak_cmyk(rgb, subset_start=0, subset_end=256, dimension=0):
     image = rgb_to_cmyk(rgb)
     n_bins = 256
