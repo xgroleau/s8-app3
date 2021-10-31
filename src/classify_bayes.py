@@ -47,9 +47,7 @@ if RELOAD_PARAMS:
                                                 {'subset_start': 0, 'subset_end': 50, 'dimension': 1}),
                                                (extract_mean_hsv, {'dimension': 1}),
                                                extract_light_pixel_count,
-                                               (extract_mean_count_pixel_in_slice,
-                                                {'subset_start': 0, 'subset_end': 75, 'dimension': 2}),
-                                               (extract_mean_cmyk, {'dimension': 0})], num_images=-1)
+                                               (extractor_unique, {'dimension': 2})], num_images=-1)
 
     f = open("params.pkl", "wb")
     pkl.dump(params, f)
@@ -69,7 +67,7 @@ bayes = BayesianClassifier(params, bins=1)
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
-view = (0, 5, 6)
+view = (0, 4, 5)
 
 # for k, v in params.items():
 #     params[k]['params'][:, 0] = (params[k]['params'][:, 0] + 50) % 255

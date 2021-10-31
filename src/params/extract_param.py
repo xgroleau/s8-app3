@@ -322,3 +322,13 @@ def extract_light_pixel_count(rgb):
                 value_3 += 1
 
     return value_3
+
+
+def extractor_unique(rgb, dimension=0):
+    image = skic.rgb2xyz(rgb)
+
+    image.reshape(-1, 3)
+    unique, counts = np.unique(image.reshape(-1, 3), axis=0, return_counts=True)
+    value = [0, 0, 0]
+    value[0], value[1], value[2] = unique[np.argmax(counts)]
+    return value[dimension]
