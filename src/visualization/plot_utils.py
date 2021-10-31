@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_1d(params: Dict[str, np.ndarray], bins=100, title="", xlabel="", colors=None):
+def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None):
     plt.figure()
-    plt.hist(params.values(), bins, alpha=0.5, label=[*params.keys()])
+    plt.hist([v['params'] for v in params.values()], bins, alpha=0.5, label=[*params.keys()])
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel("Count")
@@ -17,7 +17,7 @@ def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", col
     plt.figure()
     ax = plt.axes()
     for k, e in params.items():
-        ax.scatter(e[:, 0], e[:, 1], alpha=0.5, label=k)
+        ax.scatter(e['params'][:, 0], e['params'][:, 1], alpha=0.5, label=k)
     plt.title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
@@ -28,7 +28,7 @@ def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zla
     plt.figure()
     ax = plt.axes(projection='3d')
     for k, e in params.items():
-        ax.scatter(e[:, 0], e[:, 1], e[:, 2], alpha=0.5, label=k)
+        ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], alpha=0.5, label=k)
     plt.title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
@@ -38,7 +38,7 @@ def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zla
 
 def plot_sub_params(params: Dict[str, np.ndarray], param_indexes: Union[Tuple, int],
                     param_labels: Union[List[str], None] = None, *args, **kwargs):
-    sub_params = {k: v[:, param_indexes] for k, v in params.items()}
+    sub_params = {k: {'params': v['params'][:, param_indexes]} for k, v in params.items()}
 
     if isinstance(param_indexes, int):
         xlabel = param_labels[param_indexes] if param_labels is not None else "x"

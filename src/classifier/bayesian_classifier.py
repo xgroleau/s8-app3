@@ -4,8 +4,8 @@ import scipy.stats as stats
 
 class BayesianClassifier:
     def __init__(self, training_set, bins=100, apriori=None):
-        self._training_set_counts = [c_val.shape[0] for c_val in training_set.values()]
-        self._total_training_set_counts = np.sum([c.shape[0] for c in training_set.values()])
+        self._training_set_counts = [c_val['params'].shape[0] for c_val in training_set.values()]
+        self._total_training_set_counts = np.sum([c['params'].shape[0] for c in training_set.values()])
 
         self._classes_count = len(training_set)
 
@@ -15,16 +15,17 @@ class BayesianClassifier:
         self._apriori = apriori if apriori is not None else self._training_set_counts / self._total_training_set_counts
 
         self._normal_distributions = [
-            stats.multivariate_normal(mean=np.mean(c_val, axis=0), cov=np.cov(np.transpose(c_val))) for c_val in
+            stats.multivariate_normal(mean=np.mean(c_val['params'], axis=0), cov=np.cov(np.transpose(c_val['params'])),
+                                      allow_singular=True) for c_val in
             training_set.values()]
 
         # Extract N-dimension probability density for each class P(x|C_i)
-        self._probability_density = [np.histogramdd(c_val, bins=bins, density=True) for c_val in
+        self._probability_density = [np.histogramdd(c_val['params'], bins=bins, density=True) for c_val in
                                      training_set.values()]
         self._probability_density = [{'hist': val[0], 'edges': val[1]} for val in
                                      self._probability_density]
 
-    def fit_multiple(self,  parameters, likelihood='arbitrary', cost_matrix=None):
+    def fit_multiple(self, parameters, likelihood='arbitrary', cost_matrix=None):
         if len(parameters.shape) == 1:
             parameters = np.expand_dims(parameters, -1)
         return np.array([self.fit(v, likelihood, cost_matrix) for v in parameters])

@@ -4,9 +4,20 @@ import numpy as np
 import copy
 
 
-def subclass_param_threshold(params: np.ndarray, param_idx: int, threshold: float):
-    x1 = params[params[:, param_idx] < threshold]
-    x2 = params[params[:, param_idx] >= threshold]
+def subclass_param_threshold(params: Dict, param_idx: int, threshold: float):
+    idx1 = np.where(params['params'][:, param_idx] < threshold)
+    idx2 = np.where(params['params'][:, param_idx] >= threshold)
+
+    x1 = {
+        'image_names': [params['image_names'][i] for i in idx1[0]],
+        'params': params['params'][idx1]
+    }
+
+    x2 = {
+        'image_names': [params['image_names'][i] for i in idx2[0]],
+        'params': params['params'][idx2]
+    }
+
     return [x1, x2]
 
 
