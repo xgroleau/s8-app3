@@ -42,14 +42,26 @@ a_file = open("params.pkl", "rb")
 params = pkl.load(a_file)
 a_file.close()
 
+param_labels = ["Peak position H [5:]", "Peak stdev H", "Peak Y [5:]", "Peak a [100:150]", "Peak b [100:150]",
+                "Peak height C [0:50]", "Peak height M [0:50]", "Mean S"]
+
+
+
+plot_sub_params(params, (0, 5, 6), param_labels)
+plot_sub_params(params, 2, param_labels)
+plot_sub_params(params, 3, param_labels)
+
 params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
 params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
 params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
-#params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=50)
 
 class_representant = kmean_clustering(params, n_cluster=10)
-kNN = KNNClassifier(n_neighbors=5)
+kNN = KNNClassifier(n_neighbors=1)
 kNN.fit(class_representant)
+
+plot_sub_params(params, (0, 5), param_labels, cluster_center=class_representant)
+#plot_sub_params(params, (0, 5, 6), param_labels, cluster_center=class_representant)
+#plot_sub_params(params, 2, param_labels, cluster_center=class_representant)
 
 create_confusion_matrix(params, kNN.predict, display=True)
 

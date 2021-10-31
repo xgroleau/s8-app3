@@ -50,7 +50,7 @@ def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None)
     plt.legend()
 
 
-def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", colors=None):
+def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", cluster_center=None, colors=None):
     colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'aqua', 'brown']
 
     plt.figure()
@@ -59,6 +59,8 @@ def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", col
         ax.scatter(e['params'][:, 0], e['params'][:, 1], alpha=0.5, marker='x', color=colors[i], label=k)
         confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=1)
         confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=3)
+        if cluster_center:
+            ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], alpha=1, marker="*", color=colors[i], label=k)
 
     plt.title(title)
     ax.set_xlabel(xlabel)
@@ -79,8 +81,11 @@ def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zla
 
 
 def plot_sub_params(params: Dict[str, np.ndarray], param_indexes: Union[Tuple, int],
-                    param_labels: Union[List[str], None] = None, *args, **kwargs):
+                    param_labels: Union[List[str], None] = None, cluster_center=None, *args, **kwargs):
     sub_params = {k: {'params': v['params'][:, param_indexes]} for k, v in params.items()}
+    sub_center = None
+    if cluster_center:
+        sub_center = {k: v[:, param_indexes] for k, v in cluster_center.items()}
 
     if isinstance(param_indexes, int):
         xlabel = param_labels[param_indexes] if param_labels is not None else "x"
@@ -88,7 +93,7 @@ def plot_sub_params(params: Dict[str, np.ndarray], param_indexes: Union[Tuple, i
     elif len(param_indexes) == 2:
         xlabel = param_labels[param_indexes[0]] if param_labels is not None else "x"
         ylabel = param_labels[param_indexes[1]] if param_labels is not None else "y"
-        plot_2d(sub_params, xlabel=xlabel, ylabel=ylabel, *args, **kwargs)
+        plot_2d(sub_params, xlabel=xlabel, ylabel=ylabel, cluster_center=sub_center, *args, **kwargs)
     elif len(param_indexes) == 3:
         xlabel = param_labels[param_indexes[0]] if param_labels is not None else "x"
         ylabel = param_labels[param_indexes[1]] if param_labels is not None else "y"
