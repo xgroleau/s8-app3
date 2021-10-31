@@ -44,25 +44,35 @@ else:
     params = pkl.load(f)
     f.close()
 
+# params = param_nd(categorized_collection, [(extract_peak_hsv, {'subset_start': 0, 'dimension': 0}),
+#                                            (extract_mean_hsv, {'dimension': 1}), ], num_images=-1)
+
 bayes = BayesianClassifier(params, bins=1)
 
-create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
-create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
+#create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
+#create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
-plot_sub_params(params, (0, 5, 6), param_labels)
-plot_sub_params(params, 2, param_labels)
-plot_sub_params(params, 3, param_labels)
+view = (0, 7)
+
+# for k, v in params.items():
+#     params[k]['params'][:, 0] = (params[k]['params'][:, 0] + 50) % 255
+
+# for i in range(8):
+#     plot_sub_params(params, i, param_labels)
+
+plot_sub_params(params, view, param_labels)
+#plot_sub_params(params, 2, param_labels)
+#plot_sub_params(params, 3, param_labels)
 params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
 params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
 params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
 #params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=50)
-plot_sub_params(params, 3, param_labels)
-plot_sub_params(params, (0, 5, 6), param_labels)
-plot_sub_params(params, 2, param_labels)
+#plot_sub_params(params, 3, param_labels)
+plot_sub_params(params, view, param_labels)
+#plot_sub_params(params, 2, param_labels)
 
 bayes2 = BayesianClassifier(params, bins=1)
 create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=False, likelihood='gaussian')
-create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='gaussian')
-
+#create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
 plt.show()

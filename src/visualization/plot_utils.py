@@ -2,6 +2,43 @@ from typing import Dict, Tuple, Union, List
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import transforms
+from matplotlib.patches import Ellipse
+
+
+def confidence_ellipse(data, ax, scale=1, facecolor='none', **kwargs):
+    '''
+    ***Testé seulement sur les données du labo
+
+
+    Inspiration de la documentation de matplotlib 'Plot a confidence ellipse'
+
+    format données de classe np.array([[],
+                                       [],
+                                       ...
+                                       []]
+    ax: axe des figures matplotlib
+    scale: Facteur d'échelle de l'ellipse
+    facecolor and kwargs: Arguments pour la fonction plot de matplotlib
+
+    scale peut être utilisé comme paramètres pour tracer des ellipses à une équiprobabilité
+    autre que 1 écart-type
+    '''
+    cov = np.cov(np.transpose(data))
+    lambdas, vectors = np.linalg.eig(cov)
+    moy = np.mean(data, axis=0)
+    ellipse = Ellipse((0, 0), width=np.sqrt(lambdas[0]) * scale, height=np.sqrt(lambdas[1]) * scale,
+                      facecolor=facecolor, **kwargs)
+    angle = np.arctan2(vectors[0][1], vectors[0][0])
+
+    # alligne l'ellipse au bon endroit
+    transf = transforms.Affine2D() \
+        .rotate(-angle) \
+        .translate(moy[0], moy[1])
+
+    ellipse.set_transform(transf + ax.transData)
+
+    return ax.add_patch(ellipse)
 
 
 def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None):
@@ -14,10 +51,15 @@ def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None)
 
 
 def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", colors=None):
+    colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'aqua', 'brown']
+
     plt.figure()
     ax = plt.axes()
-    for k, e in params.items():
-        ax.scatter(e['params'][:, 0], e['params'][:, 1], alpha=0.5, label=k)
+    for i, (k, e) in enumerate(params.items()):
+        ax.scatter(e['params'][:, 0], e['params'][:, 1], alpha=0.5, marker='x', color=colors[i], label=k)
+        confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=1)
+        confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=3)
+
     plt.title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
