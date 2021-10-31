@@ -11,17 +11,18 @@ from PIL.Image import Image
 from src.classifier.bayesian_classifier import BayesianClassifier
 from src.classifier.kmean import kmean_clustering
 from src.classifier.knn import knn_classifier
+from src.classifier.subclasses import subclass, subclass_param_threshold
 from src.images import random_image_selector
 from src.images.image_collection import ImageCollection
-from src.params import map_param
-from src.params.param import param_3d, param_1d, param_nd
+from src.params.param import param_1d, param_nd
 from src.params.extract_param import *
-from src.visualization import images_display
+from src.visualization import images_display, plot_sub_params
 from src.visualization.view_histogram import histogrammes
 
 sys.path.append('../')
 CDIR = os.path.dirname(os.path.realpath(__file__))
 images_path = os.path.join(CDIR, '../baseDeDonneesImages')
+
 
 def main():
     view_hist = False
@@ -44,7 +45,21 @@ def main():
 
     categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
-    param_1d(categorized_collection, (extract_peak_hsv, {'subset_start': 5, 'dimension': 0}))
+    param_1d(categorized_collection, (extract_peak_hsv, {'subset_start': 5, 'dimension': 0}), num_images=10)
+
+    params = param_nd(categorized_collection, [
+        (extract_peak_hsv, {'subset_start': 5, 'dimension': 0}),
+        (extract_peak_cmyk, {'subset_start': 5, 'dimension': 3}),
+                                      ], num_images=-1)
+
+    plot_sub_params(params, (0,1))
+    #
+    # params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
+    # params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
+    # params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
+    #
+    # plot_sub_params(params, (0,1), ["Peak H", "Peak K"])
+    # param_1d(categorized_collection, (extract_peak_hsv, {'subset_start': 5, 'dimension': 0}))
     # param_1d(categorized_collection, extract_peak_std_hsv, dimension=0)
     # param_1d(categorized_collection, extract_peak_cmyk, subset_start=5, dimension=2)
     # param_1d(categorized_collection, extract_peak_lab, subset_start=100, subset_end=150, dimension=1)
@@ -82,4 +97,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

@@ -1,18 +1,13 @@
-from dataclasses import dataclass
 from typing import Callable, Union, Dict, List, Tuple
 import numpy as np
-
-from random import sample
-from src.visualization import images_display
-from src.visualization.view_histogram import histogrammes
-
-from .map_param import map_param
-from ..images import ImageCollection
-from ..visualization import plot_1d, plot_3d
+from PIL import Image
+from ..images import ImageCollection, random_image_selector
+from ..visualization import plot_1d
+from tqdm import tqdm
 
 ParamExtractor_t = Union[
-    Callable[[np.ndarray], Union[int, float, np.ndarray]],
-    Tuple[Callable[[np.ndarray], Union[int, float, np.ndarray]], Dict]
+    Callable[[np.ndarray, any, any], Union[int, float, np.ndarray]],
+    Tuple[Callable[[np.ndarray, any, any], Union[int, float, np.ndarray]], Dict]
 ]
 
 
@@ -36,68 +31,56 @@ def group_classes(list_classes: List[Dict[str, np.ndarray]]):
 
 
 def param_1d(img_coll: Dict[str, ImageCollection], param_extraction: ParamExtractor_t, num_images=200, bins=100,
-             title="", xlabel="", *args, **kwargs) -> Dict[str, np.ndarray]:
-    if isinstance(param_extraction, tuple):
-        params = {k: map_param(num_images, v, param_extraction[0], *args, **{**param_extraction[1], **kwargs}) for k, v in img_coll.items()}
-    else:
-        params = {k: map_param(num_images, v, param_extraction, *args, **kwargs) for k, v in img_coll.items()}
+             title="", xlabel="", *args, **kwargs):
+    params = {}
+
+    for im_class, im_coll in img_coll.items():
+        indexes = random_image_selector(num_images, im_coll)
+        image_names = [im_coll.image_list[indexes[i]] for i in range(len(indexes))]
+
+        class_params = np.zeros(len(image_names))
+
+        for i, img in enumerate(image_names):
+            rgb = np.array(Image.open(im_coll.image_folder + '\\' + img))
+
+            if isinstance(param_extraction, tuple):
+                class_params[i] = param_extraction[0](rgb, *args, **{**param_extraction[1], **kwargs})
+            else:
+                class_params[i] = param_extraction(rgb, *args, **kwargs)
+
+        params[im_class] = {
+            'image_names': image_names,
+            'params': class_params
+        }
+
     plot_1d(params, bins, title, xlabel)
     return params
 
 
 def param_nd(img_coll: Dict[str, ImageCollection],
              param_extraction: List[ParamExtractor_t],
-             num_images=200, *args, **kwargs) -> Dict[str, np.ndarray]:
-    params = []
-    for i, param_fun in enumerate(param_extraction):
-        print(f'Extracting param #{i}')
+             num_images=200, *args, **kwargs) -> Dict[str, Dict]:
 
-        if isinstance(param_fun, tuple):
-            params.append({k: map_param(num_images, v, param_fun[0], *args, **{**param_fun[1], **kwargs}) for
-                      k, v in img_coll.items()})
-        else:
-            params.append({k: map_param(num_images, v, param_fun, *args, **kwargs) for k, v in img_coll.items()})
+    params = {}
 
-    return group_classes(params)
+    for im_class, im_coll in img_coll.items():
+        indexes = random_image_selector(num_images, im_coll)
+        image_names = [im_coll.image_list[indexes[i]] for i in range(len(indexes))]
 
+        class_params = np.zeros((len(image_names), len(param_extraction)))
 
-def param_3d(img_coll: Dict[str, ImageCollection],
-             param_extraction: ParamExtractor_t,
-             num_images=200, title="", xlabel="x", ylabel="y", zlabel="z", *args, **kwargs) -> Dict[str, np.ndarray]:
-    if isinstance(param_extraction, tuple):
-        params = {k: map_param(num_images, v, param_extraction[0], *args, **{**param_extraction[1], **kwargs}) for k, v in
-                  img_coll.items()}
-    else:
-        params = {k: map_param(num_images, v, param_extraction, *args, **kwargs) for k, v in img_coll.items()}
-    plot_3d(params, title, xlabel, ylabel, zlabel)
+        for i, img in tqdm(enumerate(image_names), total=len(image_names)):
+            rgb = np.array(Image.open(im_coll.image_folder + '\\' + img))
+
+            for j, param_fun in enumerate(param_extraction):
+                if isinstance(param_fun, tuple):
+                    class_params[i, j] = param_fun[0](rgb, *args, **{**param_fun[1], **kwargs})
+                else:
+                    class_params[i, j] = param_fun(rgb, *args, **kwargs)
+
+        params[im_class] = {
+            'image_names': image_names,
+            'params': class_params
+        }
+
     return params
-
-# def get_images(img_coll: CategorizedImageCollection,
-#                   param_extraction: Callable[[np.ndarray], Union[int, float, np.ndarray]],
-#                   num_images=200, title="", xlabel="x", ylabel="y", zlabel="z", *args, **kwargs):
-#
-#     coast_param = map_param(num_images, img_coll.coast, param_extraction, 3, *args, **kwargs)
-#     coast_param_in_subclass_1 = sample([i for i, value in enumerate(coast_param) if (value[0] < 100 or value[0] > 200)], 6)
-#     coast_param_in_subclass_2 = sample([i for i, value in enumerate(coast_param) if (100 < value[0] < 200)], 6)
-#     images_display(coast_param_in_subclass_1, img_coll.coast)
-#     images_display(coast_param_in_subclass_2, img_coll.coast)
-#     histogrammes(coast_param_in_subclass_1, img_coll.coast)
-#     histogrammes(coast_param_in_subclass_2, img_coll.coast)
-#
-#     forest_param = map_param(num_images, img_coll.forest, param_extraction, 3, *args, **kwargs)
-#     forest_param_in_subclass_1 = sample([i for i, value in enumerate(forest_param) if (value[0] < 100)], 6)
-#     forest_param_in_subclass_2 = sample([i for i, value in enumerate(forest_param) if (100 < value[0])], 6)
-#     images_display(forest_param_in_subclass_1, img_coll.forest)
-#     images_display(forest_param_in_subclass_2, img_coll.forest)
-#     histogrammes(forest_param_in_subclass_1, img_coll.forest)
-#     histogrammes(forest_param_in_subclass_2, img_coll.forest)
-#
-#     street_param = map_param(num_images, img_coll.street, param_extraction, 3, *args, **kwargs)
-#     street_param_in_subclass_1 = sample([i for i, value in enumerate(street_param) if (value[0] < 100 or value[0] > 200)], 6)
-#     street_param_in_subclass_2 = sample([i for i, value in enumerate(street_param) if (100 < value[0] < 200)], 6)
-#     images_display(street_param_in_subclass_1, img_coll.street)
-#     images_display(street_param_in_subclass_2, img_coll.street)
-#     histogrammes(street_param_in_subclass_1, img_coll.street)
-#     histogrammes(street_param_in_subclass_2, img_coll.street)
-#
-#     plot_3d(coast_param, forest_param, street_param, title, xlabel, ylabel, zlabel)

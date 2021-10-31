@@ -4,3 +4,4 @@ scikit-learn==1.0
 sympy==1.9
 scikit-image==0.18.3
 scipy==1.7.1
+tqdm==4.62.3

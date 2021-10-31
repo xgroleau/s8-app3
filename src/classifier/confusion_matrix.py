@@ -6,15 +6,15 @@ import matplotlib.pyplot as plt
 from src.classifier.subclasses import aggregate_subclasses
 
 
-def create_confusion_matrix(params: Dict[str, np.ndarray], fit_function: Callable[[np.ndarray, any, any], str],
+def create_confusion_matrix(params: Dict[str, Dict], fit_function: Callable[[np.ndarray, any, any], str],
                             display=False,
                             agregate=False,
                             *args,
                             **kwargs):
 
     labels = [k for k in params.keys()]
-    expected_labels = [k for k in params.keys() for _ in range(len(params[k]))]
-    flattened_params = np.concatenate(list(params.values()))
+    expected_labels = [k for k in params.keys() for _ in range(len(params[k]['params']))]
+    flattened_params = np.concatenate([v['params'] for v in params.values()])
 
     fitted_labels = fit_function(flattened_params, *args, **kwargs)
 
