@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 
 import pickle as pkl
 
+from src.visualization import plot_sub_params
+
 sys.path.append('../')
 CDIR = os.path.dirname(os.path.realpath(__file__))
 images_path = os.path.join(CDIR, '../baseDeDonneesImages')
@@ -41,11 +43,12 @@ params = pkl.load(a_file)
 a_file.close()
 
 params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
-params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
 params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
+params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
+#params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=50)
 
-class_representant = kmean_clustering(params, n_cluster=50)
-kNN = KNNClassifier(n_neighbors=40)
+class_representant = kmean_clustering(params, n_cluster=10)
+kNN = KNNClassifier(n_neighbors=5)
 kNN.fit(class_representant)
 
 create_confusion_matrix(params, kNN.predict, display=True)
