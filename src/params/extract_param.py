@@ -125,7 +125,7 @@ def extract_peak_color(rgb, subset_start=50, subset_end=100):
     return peaks
 
 
-def extract_mean_count_pixel_in_slice(rgb, subset_start, subset_end):
+def extract_mean_count_pixel_in_slice(rgb, subset_start=0, subset_end=256, dimension=0):
     image = rgb
     n_bins = 256
     # image = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
@@ -136,19 +136,7 @@ def extract_mean_count_pixel_in_slice(rgb, subset_start, subset_end):
         for i in range(n_bins):
             pixel_values[j, i] = np.count_nonzero(image[:, :, j] == i)
 
-    index_max_x = np.argmax(smooth(pixel_values[0, :], 5)[subset_start:subset_end]) + subset_start
-    index_max_y = np.argmax(smooth(pixel_values[1, :], 5)[subset_start:subset_end]) + subset_start
-    index_max_z = np.argmax(smooth(pixel_values[2, :], 5)[subset_start:subset_end]) + subset_start
-    sx, ex = get_range_around_index(index_max_x)
-    sy, ey = get_range_around_index(index_max_y)
-    sz, ez = get_range_around_index(index_max_z)
-
-    means = [np.sum(pixel_values[0, subset_start:subset_end]),
-             np.sum(pixel_values[1, subset_start:subset_end]),
-             np.sum(pixel_values[2, subset_start:subset_end])]
-
-    return means
-
+    return np.sum(pixel_values[dimension, subset_start:subset_end])
 
 def extract_param_pixels(rgb, dimension=0):
     imageHSV = skic.rgb2hsv(rgb)
@@ -218,11 +206,16 @@ def extract_cov_pixels(rgb, dimension=0):
     return means
 
 
-def extract_mean_hsv(rgb, dimension=0):
+def extract_mean_hsv(rgb, dimension=0, subset_start=0, subset_end=256):
     image = skic.rgb2hsv(rgb)
     n_bins = 256
     # image = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
     means = np.mean(image[:, :, dimension])
+    return means
+
+
+def extract_mean_rgb(rgb, subset_start=0, subset_end=256, dimension=0):
+    means = np.mean(rgb[:, subset_start:subset_end, dimension])
     return means
 
 

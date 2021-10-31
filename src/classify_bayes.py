@@ -4,14 +4,14 @@ import sys
 from src.classifier.bayesian_classifier import BayesianClassifier
 from src.classifier.confusion_matrix import create_confusion_matrix
 from src.classifier.subclasses import subclass, subclass_param_threshold
-from src.images import ImageCollection
+from src.images import ImageCollection, export_collection, load_collection_from_file
 from src.params.extract_param import *
 from src.params.param import param_nd
 import matplotlib.pyplot as plt
 import pickle as pkl
 from src.visualization import plot_sub_params
 
-RELOAD_PARAMS = True
+RELOAD_PARAMS = False
 
 sys.path.append('../')
 CDIR = os.path.dirname(os.path.realpath(__file__))
@@ -63,5 +63,6 @@ plot_sub_params(params, 2, param_labels)
 bayes2 = BayesianClassifier(params, bins=1)
 create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=False, likelihood='gaussian')
 create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='gaussian')
+
 
 plt.show()
