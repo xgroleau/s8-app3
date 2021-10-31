@@ -60,7 +60,7 @@ def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", clu
         confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=1)
         confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=3)
         if cluster_center:
-            ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], alpha=1, marker="*", color=colors[i], label=k)
+            ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], alpha=1, marker="o", color=colors[i], label=f"{k}_cc")
 
     plt.title(title)
     ax.set_xlabel(xlabel)
@@ -68,11 +68,15 @@ def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", clu
     ax.legend()
 
 
-def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zlabel="z", colors=None):
+def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zlabel="z", cluster_center=None, colors=None):
+    colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'aqua', 'brown']
+
     plt.figure()
     ax = plt.axes(projection='3d')
-    for k, e in params.items():
-        ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], alpha=0.5, label=k)
+    for i, (k, e) in enumerate(params.items()):
+        ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], alpha=0.5, color=colors[i], label=k)
+        if cluster_center:
+            ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], cluster_center[k][:, 2], alpha=1, marker="x", color=colors[i], label=f"{k}_cc")
     plt.title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
@@ -98,6 +102,6 @@ def plot_sub_params(params: Dict[str, np.ndarray], param_indexes: Union[Tuple, i
         xlabel = param_labels[param_indexes[0]] if param_labels is not None else "x"
         ylabel = param_labels[param_indexes[1]] if param_labels is not None else "y"
         zlabel = param_labels[param_indexes[2]] if param_labels is not None else "z"
-        plot_3d(sub_params, xlabel=xlabel, ylabel=ylabel, zlabel=zlabel, *args, **kwargs)
+        plot_3d(sub_params, xlabel=xlabel, ylabel=ylabel, zlabel=zlabel, cluster_center=sub_center, *args, **kwargs)
     else:
         raise ValueError(f'Param indexes must contain between 1 and 3 parameters')

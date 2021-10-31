@@ -47,9 +47,9 @@ param_labels = ["Peak position H [5:]", "Peak stdev H", "Peak Y [5:]", "Peak a [
 
 
 
-plot_sub_params(params, (0, 5, 6), param_labels)
-plot_sub_params(params, 2, param_labels)
-plot_sub_params(params, 3, param_labels)
+#plot_sub_params(params, (0, 5, 6), param_labels)
+#plot_sub_params(params, 2, param_labels)
+#plot_sub_params(params, 3, param_labels)
 
 params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
 params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
@@ -59,7 +59,7 @@ class_representant = kmean_clustering(params, n_cluster=10)
 kNN = KNNClassifier(n_neighbors=1)
 kNN.fit(class_representant)
 
-plot_sub_params(params, (0, 5), param_labels, cluster_center=class_representant)
+plot_sub_params(params, (0, 5, 6), param_labels, cluster_center=class_representant)
 #plot_sub_params(params, (0, 5, 6), param_labels, cluster_center=class_representant)
 #plot_sub_params(params, 2, param_labels, cluster_center=class_representant)
 
