@@ -24,7 +24,7 @@ def create_confusion_matrix(params: Dict[str, Dict], fit_function: Callable[[np.
         # Convert to aggregated version and remove duplicates
         labels = list(dict.fromkeys(aggregate_subclasses(labels)))
 
-    confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels, labels=labels, normalize=None)
+    confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels, labels=labels, normalize='true')
 
     if display:
         display = metrics.ConfusionMatrixDisplay(confusion_matrix, display_labels=labels)

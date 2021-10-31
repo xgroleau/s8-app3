@@ -51,7 +51,7 @@ def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None)
 
 
 def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", colors=None):
-    colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'aqua', 'brown']
+    colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'brown', 'grey']
 
     plt.figure()
     ax = plt.axes()

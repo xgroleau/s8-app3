@@ -33,25 +33,25 @@ def main():
     collection = load_collection_from_file("collection.pkl", images_path)
 
     if view_hist:
-        im_list_coast = random_image_selector(6, collection['coast_1'])
+        im_list_coast = random_image_selector(6, collection['coast_0'])
         images_display(im_list_coast, coast)
         histogrammes(im_list_coast, coast)
 
-        im_list_forest = random_image_selector(6, collection['forest_1'])
+        im_list_forest = random_image_selector(6, collection['forest_0_0'])
         images_display(im_list_forest, forest)
         histogrammes(im_list_forest, forest)
 
-        im_list_street = random_image_selector(6, collection['street_1'])
+        im_list_street = random_image_selector(6, collection['street_0_0'])
         images_display(im_list_street, street)
         histogrammes(im_list_street, street)
 
-    categorized_collection = {'coast': collection['coast_1'], 'forest': collection['forest_1'], 'street': collection['street_1']}
-
-    params = param_nd(categorized_collection, [(extract_peak_hsv, {'subset_start': 5, 'dimension': 0}),
-                                               (extract_mean_count_pixel_in_slice, {'subset_start': 0, 'subset_end': 75, 'dimension': 2})],
-                      num_images=-1)
-
-    plot_sub_params(params, (0, 1))
+    # categorized_collection = {'coast': collection['coast_1'], 'forest': collection['forest_1'], 'street': collection['street_1']}
+    #
+    # params = param_nd(categorized_collection, [(extract_peak_hsv, {'subset_start': 5, 'dimension': 0}),
+    #                                            (extract_mean_count_pixel_in_slice, {'subset_start': 0, 'subset_end': 75, 'dimension': 2})],
+    #                   num_images=-1)
+    #
+    # plot_sub_params(params, (0, 1))
 #
 # params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
 # params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
