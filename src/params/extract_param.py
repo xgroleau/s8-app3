@@ -82,7 +82,7 @@ def extract_peak_b_minus_a(rgb):
     a_hist_sliced = a_hist[100:200]
     return np.mean(b_hist_sliced - a_hist_sliced)
 
-    
+
 def get_range_around_index(index_max, width=4):
     index = index_max
     if index < width:
@@ -138,10 +138,11 @@ def extract_mean_count_pixel_in_slice(rgb, subset_start=0, subset_end=256, dimen
 
     return np.sum(pixel_values[dimension, subset_start:subset_end])
 
+
 def extract_param_pixels(rgb, dimension=0):
     imageHSV = skic.rgb2hsv(rgb)
     n_bins = 256
-    image = np.round(imageHSV*(n_bins-1)) # HSV has all values between 0 and 100 skic.rgb2hsv
+    image = np.round(imageHSV * (n_bins - 1))  # HSV has all values between 0 and 100 skic.rgb2hsv
 
     # min_L = 0
     # max_L = 100
@@ -175,7 +176,7 @@ def extract_param_pixels(rgb, dimension=0):
 def extract_cov_pixels(rgb, dimension=0):
     imageHSV = skic.rgb2hsv(rgb)
     n_bins = 256
-    image = np.round(imageHSV*(n_bins-1)) # HSV has all values between 0 and 100 skic.rgb2hsv
+    image = np.round(imageHSV * (n_bins - 1))  # HSV has all values between 0 and 100 skic.rgb2hsv
 
     # min_L = 0
     # max_L = 100
@@ -211,6 +212,12 @@ def extract_mean_hsv(rgb, dimension=0, subset_start=0, subset_end=256):
     n_bins = 256
     # image = np.round(imageHSV*(n_bins-1)) #HSV has all values between 0 and 100
     means = np.mean(image[:, :, dimension])
+    return means
+
+
+def extract_mean_cmyk(rgb, dimension=0, subset_start=0, subset_end=256):
+    image = rgb_to_cmyk(rgb)
+    means = np.mean(image[:, subset_start:subset_end, dimension])
     return means
 
 
@@ -277,7 +284,7 @@ def extract_peak_lab(rgb, subset_start=0, subset_end=256, dimension=0):
 def extract_peak_hsv(rgb, subset_start=0, subset_end=256, dimension=0):
     imageHSV = skic.rgb2hsv(rgb)
     n_bins = 256
-    image = np.round(imageHSV*(n_bins-1)) # HSV has all values between 0 and 100 skic.rgb2hsv
+    image = np.round(imageHSV * (n_bins - 1))  # HSV has all values between 0 and 100 skic.rgb2hsv
 
     pixel_values = np.zeros((3, n_bins))
     for j in range(3):
@@ -292,7 +299,7 @@ def extract_peak_hsv(rgb, subset_start=0, subset_end=256, dimension=0):
 def extract_peak_std_hsv(rgb, subset_start=0, subset_end=256, dimension=0):
     imageHSV = skic.rgb2hsv(rgb)
     n_bins = 256
-    image = np.round(imageHSV*(n_bins-1)) # HSV has all values between 0 and 100 skic.rgb2hsv
+    image = np.round(imageHSV * (n_bins - 1))  # HSV has all values between 0 and 100 skic.rgb2hsv
 
     pixel_values = np.zeros((3, n_bins))
     for j in range(3):
@@ -305,3 +312,51 @@ def extract_peak_std_hsv(rgb, subset_start=0, subset_end=256, dimension=0):
 
     std = pixel_values[dimension, sx:ex].std()
     return std
+
+
+def extract_light_pixel_count(rgb):
+    value_3 = 0
+    for i in range(len(rgb)):
+        for j in range(len(rgb[i])):
+            if rgb[i, j, 0] > 200 and rgb[i, j, 1] > 200 and rgb[i, j, 2] > 200:
+                value_3 += 1
+
+    return value_3
+
+
+def extractor_cmyk(rgb, dimension=0):
+    image = rgb_to_cmyk(rgb)
+
+    image.reshape(-1, 4)
+    unique, counts = np.unique(image.reshape(-1, 4), axis=0, return_counts=True)
+    value = [0, 0, 0, 0]
+    value[0], value[1], value[2], value[3] = unique[np.argmax(counts)]
+    return value[dimension]
+
+
+def rgb_value(rgb):
+    return rgb
+
+
+def extractor_mean(rgb, dimension=0, base_function=rgb_value):
+    image = base_function(rgb)
+    return np.mean(image[:, :, dimension])
+
+
+def extractor_std(rgb, dimension=0, base_function=rgb_value):
+    image = base_function(rgb)
+    return np.std(image[:, :, dimension])
+
+
+def extractor_median(rgb, dimension=0, base_function=rgb_value):
+    image = base_function(rgb)
+    return np.median(image[:, :, dimension])
+
+
+def extractor_unique(rgb, dimension=0, base_function=rgb_value):
+    image = base_function(rgb)
+    dimensions = image.shape[2]
+    image.reshape(-1, dimensions)
+    unique, counts = np.unique(image.reshape(-1, dimensions), axis=0, return_counts=True)
+    value = unique[np.argmax(counts)]
+    return value[dimension]

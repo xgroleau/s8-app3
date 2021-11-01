@@ -6,12 +6,15 @@ from src.classifier.confusion_matrix import create_confusion_matrix
 from src.classifier.subclasses import subclass, subclass_param_threshold
 from src.images import ImageCollection, export_collection, load_collection_from_file
 from src.params.extract_param import *
-from src.params.param import param_nd
+from src.params.param import param_nd, param_remove_unused
 import matplotlib.pyplot as plt
 import pickle as pkl
 from src.visualization import plot_sub_params
 
-RELOAD_PARAMS = False
+from skimage import color as skic
+
+from src.images import rgb_to_cmyk, smooth
+
 
 sys.path.append('../')
 CDIR = os.path.dirname(os.path.realpath(__file__))
@@ -23,18 +26,19 @@ street = ImageCollection(base_path=images_path, filter_name="street")
 
 categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
-param_labels = ["Peak position H [5:]", "Peak stdev H", "Peak Y [5:]", "Peak a [100:150]", "Peak b [100:150]",
-                "Peak height C [0:50]", "Peak height M [0:50]", "Mean S"]
+param_labels = ["extractor_unique", "extractor_mean r", "extractor_mean g", "extractor_mean b", "extractor_median r",
+                "extractor_median g", "extractor_median b", "Mean CMYK"]
 
+RELOAD_PARAMS = False
 if RELOAD_PARAMS:
-    params = param_nd(categorized_collection, [(extract_peak_hsv, {'subset_start': 5, 'dimension': 0}),
-                                               (extract_peak_std_hsv, {'dimension': 0}),
-                                               (extract_peak_cmyk, {'subset_start': 5, 'dimension': 2}),
-                                               (extract_peak_lab, {'subset_start': 100, 'subset_end': 150, 'dimension': 1}),
-                                               (extract_peak_lab, {'subset_start': 100, 'subset_end': 150, 'dimension': 2}),
-                                               (extract_peak_height_cmyk, {'subset_start': 0, 'subset_end': 50, 'dimension': 0}),
-                                               (extract_peak_height_cmyk, {'subset_start': 0, 'subset_end': 50, 'dimension': 1}),
-                                               (extract_mean_hsv, {'dimension': 1}), ], num_images=-1)
+    params = param_nd(categorized_collection, [(extractor_mean, {'dimension': 1, 'base_function': skic.rgb2xyz}),
+                                               (extractor_mean, {'dimension': 2, 'base_function': rgb_to_cmyk}),
+                                               (extractor_mean, {'dimension': 0, }),
+                                               (extractor_mean, {'dimension': 1, }),
+                                               (extractor_mean, {'dimension': 2, }),
+                                               (extractor_std, {'dimension': 2, 'base_function': skic.rgb2hsv}),
+                                               (extractor_std, {'dimension': 3, 'base_function': rgb_to_cmyk}),
+                                               ], num_images=-1)
 
     f = open("params.pkl", "wb")
     pkl.dump(params, f)
@@ -44,15 +48,24 @@ else:
     params = pkl.load(f)
     f.close()
 
+
+# Keep extractor_unique, rgb mean, rgb median peut remove median et unique xyz proposition: hsv 11, xyz 4, cmyk 6, cmyk 15
+# CMYK Utile pour differencier coast 4, (6 -7), 9, 12, 13, (15 -9)
+# CMYK Utile pour differencier street 5, 6, 8
+# xyz forest 3, (4), 5
+# hsv 2 (11)
+params = param_remove_unused(params, [])
+
 # params = param_nd(categorized_collection, [(extract_peak_hsv, {'subset_start': 0, 'dimension': 0}),
-#                                            (extract_mean_hsv, {'dimension': 1}), ], num_images=-1)
+#                                            (extract_peak_lab, {'dimension': 2}), ], num_images=-1)
+
 
 bayes = BayesianClassifier(params, bins=1)
 
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
-view = (0, 7)
+view = (3,4,6)
 
 # for k, v in params.items():
 #     params[k]['params'][:, 0] = (params[k]['params'][:, 0] + 50) % 255
@@ -63,9 +76,11 @@ view = (0, 7)
 plot_sub_params(params, view, param_labels)
 #plot_sub_params(params, 2, param_labels)
 #plot_sub_params(params, 3, param_labels)
-params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
-params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
-params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
+# params = subclass(params, 'coast', subclass_param_threshold, param_idx=1, threshold=89)
+# params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=0.3)
+# params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=0.3)
+# params = subclass(params, 'street_0', subclass_param_threshold, param_idx=4, threshold=4000)
+# params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=6000)
 #params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=50)
 #plot_sub_params(params, 3, param_labels)
 plot_sub_params(params, view, param_labels)
@@ -73,6 +88,8 @@ plot_sub_params(params, view, param_labels)
 
 bayes2 = BayesianClassifier(params, bins=1)
 create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=False, likelihood='gaussian')
-#create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='gaussian')
+create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='gaussian')
+
+export_collection({k: v['image_names'] for k, v in params.items()}, "collection.pkl")
 
 plt.show()
