@@ -30,14 +30,15 @@ param_labels = ["extractor_unique", "extractor_mean r", "extractor_mean g", "ext
                 "extractor_median g", "extractor_median b", "Mean CMYK"]
 
 RELOAD_PARAMS = False
+
+def grey(value):
+    return np.array([skic.rgb2gray(value)])
+
 if RELOAD_PARAMS:
-    params = param_nd(categorized_collection, [(extractor_mean, {'dimension': 1, 'base_function': skic.rgb2xyz}),
-                                               (extractor_mean, {'dimension': 2, 'base_function': rgb_to_cmyk}),
-                                               (extractor_mean, {'dimension': 0, }),
-                                               (extractor_mean, {'dimension': 1, }),
-                                               (extractor_mean, {'dimension': 2, }),
-                                               (extractor_std, {'dimension': 2, 'base_function': skic.rgb2hsv}),
-                                               (extractor_std, {'dimension': 3, 'base_function': rgb_to_cmyk}),
+    params = param_nd(categorized_collection, [(extractor_unique, {'dimension': 0, 'base_function': grey}),
+                                               (extractor_mean, {'dimension': 0, 'base_function': grey}),
+                                               (extractor_median, {'dimension': 0, 'base_function': grey}),
+                                               (extractor_std, {'dimension': 0, 'base_function': grey}),
                                                ], num_images=-1)
 
     f = open("params.pkl", "wb")
@@ -65,7 +66,7 @@ bayes = BayesianClassifier(params, bins=1)
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
-view = (3,4,6)
+view = (3, 1, 2)
 
 # for k, v in params.items():
 #     params[k]['params'][:, 0] = (params[k]['params'][:, 0] + 50) % 255
@@ -76,7 +77,7 @@ view = (3,4,6)
 plot_sub_params(params, view, param_labels)
 #plot_sub_params(params, 2, param_labels)
 #plot_sub_params(params, 3, param_labels)
-# params = subclass(params, 'coast', subclass_param_threshold, param_idx=1, threshold=89)
+# params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=0.3)
 # params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=0.3)
 # params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=0.3)
 # params = subclass(params, 'street_0', subclass_param_threshold, param_idx=4, threshold=4000)

@@ -72,9 +72,9 @@ def histogrammes(indexes: iter, im_coll: ImageCollection, n_bins: int = 256):
         ax[num_images,1].set_title(f'histogramme HSV de {image_name}')
 
         x_values = range(start, end)
-        ax[num_images, 2].plot(x_values, smooth(pixel_valuesRGB[0, start:end], 5), c='red')
-        ax[num_images, 2].plot(x_values, smooth(pixel_valuesRGB[1, start:end], 5), c='green')
-        ax[num_images, 2].plot(x_values, smooth(pixel_valuesRGB[2, start:end], 5), c='blue')
+        ax[num_images, 2].plot(x_values, pixel_valuesLab[0, start:end], c='red')
+        ax[num_images, 2].plot(x_values, pixel_valuesLab[1, start:end], c='green')
+        ax[num_images, 2].plot(x_values, pixel_valuesLab[2, start:end], c='blue')
         ax[num_images, 2].set(xlabel='pixels', ylabel='compte par valeur d\'intensité')
         ax[num_images, 2].set_title(f'histogramme LAB de {image_name}')
 
