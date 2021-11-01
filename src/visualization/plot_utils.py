@@ -42,6 +42,9 @@ def confidence_ellipse(data, ax, scale=1, facecolor='none', **kwargs):
 
 
 def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None):
+    """
+    Plot an histogram for a 1d parameter
+    """
     plt.figure()
     plt.hist([v['params'] for v in params.values()], bins, alpha=0.5, label=[*params.keys()])
     plt.title(title)
@@ -51,6 +54,9 @@ def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None)
 
 
 def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", cluster_center=None, colors=None):
+    """
+    Plot a 2d scatter for the given parameters
+    """
     colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'aqua', 'brown']
 
     plt.figure()
@@ -69,6 +75,9 @@ def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", clu
 
 
 def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zlabel="z", cluster_center=None, colors=None):
+    """
+    Plot a 3d scatter for the given parameters
+    """
     colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'aqua', 'brown']
 
     plt.figure()

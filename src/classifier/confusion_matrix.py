@@ -12,6 +12,9 @@ def create_confusion_matrix(params: Dict[str, Dict], fit_function: Callable[[np.
                             normalize=None,
                             *args,
                             **kwargs):
+    """
+    Plots a confusion matrix give params and a fit function
+    """
 
     labels = [k for k in params.keys()]
     expected_labels = [k for k in params.keys() for _ in range(len(params[k]['params']))]

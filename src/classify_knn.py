@@ -58,17 +58,17 @@ param_labels = ["Peak position H [5:]", "Peak stdev H", "Peak Y [5:]", "Peak a [
 #plot_sub_params(params, 2, param_labels)
 #plot_sub_params(params, 3, param_labels)
 
-params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
-params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
-params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
+#params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
+#params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
+#params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
 
 class_representant = kmean_clustering(params, n_cluster=50)
 kNN = KNNClassifier(n_neighbors=1)
 kNN.fit(class_representant)
 
-plot_sub_params(params, (0, 1, 2), param_labels, cluster_center=class_representant, title="012")
-plot_sub_params(params, (3, 4, 5), param_labels, cluster_center=class_representant, title="345")
-plot_sub_params(params, (6, 7), param_labels, cluster_center=class_representant, title="67")
+#plot_sub_params(params, (0, 1, 2), param_labels, cluster_center=class_representant, title="012")
+#plot_sub_params(params, (3, 4, 5), param_labels, cluster_center=class_representant, title="345")
+#plot_sub_params(params, (6, 7), param_labels, cluster_center=class_representant, title="67")
 
 create_confusion_matrix(params, kNN.predict, display=True, normalize="true")
 create_confusion_matrix(params, kNN.predict, display=True, agregate=True, normalize="true")
