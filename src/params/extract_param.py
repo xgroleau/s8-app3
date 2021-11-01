@@ -324,16 +324,6 @@ def extract_light_pixel_count(rgb):
     return value_3
 
 
-def extractor_unique(rgb, dimension=0):
-    image = skic.rgb2xyz(rgb)
-
-    image.reshape(-1, 3)
-    unique, counts = np.unique(image.reshape(-1, 3), axis=0, return_counts=True)
-    value = [0, 0, 0]
-    value[0], value[1], value[2] = unique[np.argmax(counts)]
-    return value[dimension]
-
-
 def extractor_cmyk(rgb, dimension=0):
     image = rgb_to_cmyk(rgb)
 
@@ -344,9 +334,29 @@ def extractor_cmyk(rgb, dimension=0):
     return value[dimension]
 
 
-def extractor_mean_rgb(rgb, dimension=0):
-    return np.mean(rgb[:, :, dimension])
+def rgb_value(rgb):
+    return rgb
 
 
-def extractor_median_rgb(rgb, dimension=0):
-    return np.median(rgb[:, :, dimension])
+def extractor_mean(rgb, dimension=0, base_function=rgb_value):
+    image = base_function(rgb)
+    return np.mean(image[:, :, dimension])
+
+
+def extractor_std(rgb, dimension=0, base_function=rgb_value):
+    image = base_function(rgb)
+    return np.std(image[:, :, dimension])
+
+
+def extractor_median(rgb, dimension=0, base_function=rgb_value):
+    image = base_function(rgb)
+    return np.median(image[:, :, dimension])
+
+
+def extractor_unique(rgb, dimension=0, base_function=rgb_value):
+    image = base_function(rgb)
+    dimensions = image.shape[2]
+    image.reshape(-1, dimensions)
+    unique, counts = np.unique(image.reshape(-1, dimensions), axis=0, return_counts=True)
+    value = unique[np.argmax(counts)]
+    return value[dimension]

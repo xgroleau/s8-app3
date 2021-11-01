@@ -84,3 +84,12 @@ def param_nd(img_coll: Dict[str, ImageCollection],
         }
 
     return params
+
+
+def param_remove_unused(params, to_remove):
+    to_remove.sort(reverse=True)
+    for x in params.keys():
+        for index in to_remove:
+            params[x]['params'] = np.delete(params[x]['params'], index, axis=1)
+
+    return params
