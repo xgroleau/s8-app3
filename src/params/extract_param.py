@@ -332,3 +332,21 @@ def extractor_unique(rgb, dimension=0):
     value = [0, 0, 0]
     value[0], value[1], value[2] = unique[np.argmax(counts)]
     return value[dimension]
+
+
+def extractor_cmyk(rgb, dimension=0):
+    image = rgb_to_cmyk(rgb)
+
+    image.reshape(-1, 4)
+    unique, counts = np.unique(image.reshape(-1, 4), axis=0, return_counts=True)
+    value = [0, 0, 0, 0]
+    value[0], value[1], value[2], value[3] = unique[np.argmax(counts)]
+    return value[dimension]
+
+
+def extractor_mean_rgb(rgb, dimension=0):
+    return np.mean(rgb[:, :, dimension])
+
+
+def extractor_median_rgb(rgb, dimension=0):
+    return np.median(rgb[:, :, dimension])
