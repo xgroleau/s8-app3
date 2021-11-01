@@ -5,6 +5,7 @@ from src.classifier.bayesian_classifier import BayesianClassifier
 from src.classifier.confusion_matrix import create_confusion_matrix
 from src.classifier.subclasses import subclass, subclass_param_threshold
 from src.images import ImageCollection, export_collection, load_collection_from_file
+from src.metrics.fisher_criterion import analyze_fisher_discriminant
 from src.params.extract_param import *
 from src.params.param import param_nd, param_remove_unused
 import matplotlib.pyplot as plt
@@ -65,7 +66,7 @@ bayes = BayesianClassifier(params, bins=1)
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
-view = (3,4,6)
+view = (6)
 
 # for k, v in params.items():
 #     params[k]['params'][:, 0] = (params[k]['params'][:, 0] + 50) % 255
@@ -91,5 +92,7 @@ create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=Fals
 create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
 export_collection({k: v['image_names'] for k, v in params.items()}, "collection.pkl")
+
+analyze_fisher_discriminant(params)
 
 plt.show()
