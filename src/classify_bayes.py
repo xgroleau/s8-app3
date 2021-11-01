@@ -66,7 +66,7 @@ bayes = BayesianClassifier(params, bins=1)
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
-view = (6)
+view = (0, 5)
 
 # for k, v in params.items():
 #     params[k]['params'][:, 0] = (params[k]['params'][:, 0] + 50) % 255
@@ -87,9 +87,11 @@ plot_sub_params(params, view, param_labels)
 plot_sub_params(params, view, param_labels)
 #plot_sub_params(params, 2, param_labels)
 
-bayes2 = BayesianClassifier(params, bins=1)
-create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=False, likelihood='gaussian')
-create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='gaussian')
+params = param_remove_unused(params, [0, 5])
+
+bayes2 = BayesianClassifier(params, bins=10)
+create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=False, likelihood='arbitrary')
+create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='arbitrary')
 
 export_collection({k: v['image_names'] for k, v in params.items()}, "collection.pkl")
 

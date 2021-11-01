@@ -13,10 +13,16 @@ def create_confusion_matrix(params: Dict[str, Dict], fit_function: Callable[[np.
                             **kwargs):
 
     labels = [k for k in params.keys()]
-    expected_labels = [k for k in params.keys() for _ in range(len(params[k]['params']))]
+    image_names = [n for k in params.keys() for n in params[k]['image_names']]
+    expected_labels = np.array([k for k in params.keys() for _ in range(len(params[k]['params']))])
     flattened_params = np.concatenate([v['params'] for v in params.values()])
 
     fitted_labels = fit_function(flattened_params, *args, **kwargs)
+
+    errors = np.where(fitted_labels != expected_labels)
+    print("Wrongly classified images: ")
+    for error_idx in errors[0]:
+        print(f'{image_names[error_idx]} classified as {fitted_labels[error_idx]}')
 
     if agregate:
         expected_labels = aggregate_subclasses(expected_labels)
