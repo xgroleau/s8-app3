@@ -45,7 +45,7 @@ if RELOAD_PARAMS:
     pkl.dump(params, f)
     f.close()
 else:
-    f = open("params.pkl", "rb")
+    f = open("params_hsv.pkl", "rb")
     params = pkl.load(f)
     f.close()
 
@@ -55,7 +55,8 @@ else:
 # CMYK Utile pour differencier street 5, 6, 8
 # xyz forest 3, (4), 5
 # hsv 2 (11)
-params = param_remove_unused(params, [])
+
+params = param_remove_unused(params, [0,1,2, -1,-2, -3])
 
 # params = param_nd(categorized_collection, [(extract_peak_hsv, {'subset_start': 0, 'dimension': 0}),
 #                                            (extract_peak_lab, {'dimension': 2}), ], num_images=-1)
@@ -66,7 +67,7 @@ bayes = BayesianClassifier(params, bins=1)
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
-view = (6)
+view = (3,4,5)
 
 # for k, v in params.items():
 #     params[k]['params'][:, 0] = (params[k]['params'][:, 0] + 50) % 255
@@ -77,9 +78,8 @@ view = (6)
 plot_sub_params(params, view, param_labels)
 #plot_sub_params(params, 2, param_labels)
 #plot_sub_params(params, 3, param_labels)
-# params = subclass(params, 'coast', subclass_param_threshold, param_idx=1, threshold=89)
-# params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=0.3)
-# params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=0.3)
+# params = subclass(params, 'coast', subclass_param_threshold, param_idx=3, threshold=0.34)
+# params = subclass(params, 'forest', subclass_param_threshold, param_idx=3, threshold=0.34)
 # params = subclass(params, 'street_0', subclass_param_threshold, param_idx=4, threshold=4000)
 # params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=6000)
 #params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=50)
@@ -87,9 +87,9 @@ plot_sub_params(params, view, param_labels)
 plot_sub_params(params, view, param_labels)
 #plot_sub_params(params, 2, param_labels)
 
-bayes2 = BayesianClassifier(params, bins=1)
-create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=False, likelihood='gaussian')
-create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='gaussian')
+bayes2 = BayesianClassifier(params, bins=10)
+create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=False, likelihood='arbitrary')
+create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='arbitrary')
 
 export_collection({k: v['image_names'] for k, v in params.items()}, "collection.pkl")
 
