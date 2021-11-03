@@ -34,11 +34,11 @@ def classify(params: Dict[str, Dict], fit_function: Callable[[np.ndarray, any, a
 
 
 def display_confusion_matrix(labels, expected_labels, fitted_labels, normalize="true"):
-    aggregated_labels = list(dict.fromkeys(aggregate_subclasses(labels)))
-
     confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels, labels=labels, normalize=normalize)
     display = metrics.ConfusionMatrixDisplay(confusion_matrix, display_labels=labels)
     display.plot()
+
+    aggregated_labels = list(dict.fromkeys(aggregate_subclasses(labels)))
 
     if len(aggregated_labels) < len(labels):
         expected_labels = aggregate_subclasses(expected_labels)
