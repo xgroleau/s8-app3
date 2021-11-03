@@ -32,8 +32,10 @@ categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
 if RELOAD_PARAMS:
     params = param_nd(categorized_collection, [
-                                               (extractor_mean, {'dimension': 1}),
-                                               (extractor_mean, {'dimension': 2}),
+                                               (extract_peak_hsv, {'subset_start': 5, 'dimension': 0}),
+                                               (extractor_mean, {'dimension': 1, 'base_function': skic.rgb2yuv}),
+                                               (extractor_mean, {'dimension': 2, 'base_function': skic.rgb2yuv}),
+                                               (extractor_mean, {'dimension': 1, 'base_function': skic.rgb2hsv}),
                                                (extractor_median, {'dimension': 2, }),
                                                (extractor_std, {'dimension': 0, }),
                                                (extractor_std, {'dimension': 1, }),
@@ -55,12 +57,12 @@ param_labels = ['0', '1','2','3','4','5','6','7','8','9','10','11','12']
 
 view_dims = (0,1,2)
 
-params = subclass(params, 'coast', subclass_param_threshold, param_idx=1, threshold=0.1)
+params = subclass(params, 'coast', subclass_param_threshold, param_idx=1, threshold=0.05)
 
 if PLOT_PERF_BY_N_REP:
     plot_knn_performance(params, 5, 200, save_path="../figures/knn-performance")
 
-class_representant = kmean_clustering(params, n_cluster=20)
+class_representant = kmean_clustering(params, n_cluster=30)
 kNN = KNNClassifier(n_neighbors=1)
 kNN.fit(class_representant)
 plot_sub_params(params, view_dims, param_labels, cluster_center=class_representant, title="012")
