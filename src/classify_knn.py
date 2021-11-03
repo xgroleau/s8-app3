@@ -58,6 +58,8 @@ param_labels = ['0', '1','2','3','4','5','6','7','8','9','10','11','12']
 
 view_dims = (0,1,2)
 
+params = subclass(params, 'coast', subclass_param_threshold, param_idx=7, threshold=0.05)
+
 plot_sub_params(params, (0, 1, 2), param_labels)
 plot_sub_params(params, (3, 4, 5), param_labels)
 plot_sub_params(params, (6, 7), param_labels)
