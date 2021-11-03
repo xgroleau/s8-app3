@@ -30,7 +30,7 @@ street = ImageCollection(base_path=images_path, filter_name="street")
 
 categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
-param_labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+param_labels = ['Moyenne Jaune', 'Médiane Bleu', 'Écart-type Vert', 'Moyenne Rouge', 'Moyenne Bleu', 'Moyenne Projection en Rouge', 'Écart-type de la luminosité']
 
 RELOAD_PARAMS = False
 if RELOAD_PARAMS:
@@ -56,7 +56,7 @@ analyze_fisher_discriminant(params)
 
 bayes = BayesianClassifier(params, bins=1)
 
-view = (3, 4)
+view = (3,4)
 
 plot_sub_params(params, view)
 
