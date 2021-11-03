@@ -1,17 +1,22 @@
 import os
 import glob
-from dataclasses import dataclass
 from typing import Dict, List
 import pickle as pkl
 
 
 def export_collection(image_names: Dict[str, List[str]], file_name: str):
+    """
+    Export a collection if image in a pickle file
+    """
     f = open(file_name, "wb")
     pkl.dump(image_names, f)
     f.close()
 
 
 def load_collection_from_file(file_name:str, images_base_path:str):
+    """
+    Load a collection of images given a certian name
+    """
     f = open(file_name, "rb")
     images_names = pkl.load(f)
     f.close()
@@ -21,6 +26,9 @@ def load_collection_from_file(file_name:str, images_base_path:str):
 
 
 class ImageCollection:
+    """
+    Class to manage a collection of images
+    """
     def __init__(self, base_path=".", image_names=None, filter_name=None):
         # liste de toutes les images
         self.path = glob.glob(fr"{base_path}\*.jpg")

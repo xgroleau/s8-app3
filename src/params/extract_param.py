@@ -4,6 +4,12 @@ from skimage import color as skic
 from src.images import rgb_to_cmyk, smooth
 
 
+"""
+Definition of the function to extract parameters
+Those functions takes an RGB image and returns the extracted parameters of the image
+"""
+
+
 def extract_mean(rgb):
     image = rgb_to_cmyk(rgb)
     n_bins = 256
