@@ -46,7 +46,7 @@ def display_confusion_matrix(labels, expected_labels, fitted_labels, normalize="
         confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels, labels=aggregated_labels,
                                                     normalize=normalize)
 
-        display = metrics.ConfusionMatrixDisplay(confusion_matrix, display_labels=labels)
+        display = metrics.ConfusionMatrixDisplay(confusion_matrix, display_labels=aggregated_labels)
         display.plot()
 
 

@@ -31,14 +31,13 @@ street = ImageCollection(base_path=images_path, filter_name="street")
 categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
 if RELOAD_PARAMS:
-    params = param_nd(categorized_collection, [(extract_peak_hsv, {'subset_start': 5, 'dimension': 0}),
-                                               (extract_peak_std_hsv, {'dimension': 0}),
-                                               (extract_peak_cmyk, {'subset_start': 5, 'dimension': 2}),
-                                               (extract_peak_lab, {'subset_start': 100, 'subset_end': 150, 'dimension': 1}),
-                                               (extract_peak_lab, {'subset_start': 100, 'subset_end': 150, 'dimension': 2}),
-                                               (extract_peak_height_cmyk, {'subset_start': 0, 'subset_end': 50, 'dimension': 0}),
-                                               (extract_peak_height_cmyk, {'subset_start': 0, 'subset_end': 50, 'dimension': 1}),
-                                               (extract_mean_hsv, {'dimension': 1}), ], num_images=-1)
+    params = param_nd(categorized_collection, [
+                                               (extractor_mean, {'dimension': 1}),
+                                               (extractor_mean, {'dimension': 2}),
+                                               (extractor_median, {'dimension': 2, }),
+                                               (extractor_std, {'dimension': 0, }),
+                                               (extractor_std, {'dimension': 1, }),
+                                               ], num_images=-1)
 
     f = open("params.pkl", "wb")
     pkl.dump(params, f)
@@ -52,17 +51,11 @@ a_file = open("params.pkl", "rb")
 params = pkl.load(a_file)
 a_file.close()
 
-param_labels = ["Peak position H [5:]", "Peak stdev H", "Peak Y [5:]", "Peak a [100:150]", "Peak b [100:150]",
-                "Peak height C [0:50]", "Peak height M [0:50]", "Mean S"]
+param_labels = ['0', '1','2','3','4','5','6','7','8','9','10','11','12']
 
 view_dims = (0,1,2)
 
-plot_sub_params(params, (0, 1, 2), param_labels)
-plot_sub_params(params, (3, 4), param_labels)
-
-#params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
-#params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
-#params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
+params = subclass(params, 'coast', subclass_param_threshold, param_idx=1, threshold=0.1)
 
 if PLOT_PERF_BY_N_REP:
     plot_knn_performance(params, 5, 200, save_path="../figures/knn-performance")
