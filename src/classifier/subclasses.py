@@ -22,7 +22,7 @@ def subclass_param_threshold(params: Dict, param_idx: int, threshold: float):
 
 
 def subclass(params: Dict[str, np.ndarray], base_class: str,
-             fun: Callable[[np.ndarray, any, any], List[np.ndarray]], *args, **kwargs) -> Dict[str, np.ndarray]:
+             fun: Callable[[Dict, any, any], List[np.ndarray]], *args, **kwargs) -> Dict[str, Dict]:
     """
     Create two subclasses given a class determined by a callable function
     """

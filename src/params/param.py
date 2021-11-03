@@ -78,3 +78,24 @@ def param_remove_unused(params, to_remove):
             params[x]['params'] = np.delete(params[x]['params'], index, axis=1)
 
     return params
+
+
+def add_params_to_existing(params, database_base_path, param_extractor: ParamExtractor_t, *args, **kwargs):
+    new_params = {}
+    for k in params.keys():
+        old_shape = params[k]['params'].shape
+        new_class_params = np.zeros((old_shape[0], old_shape[1] + 1))
+
+        for i, img in tqdm(enumerate(params[k]['image_names']), total=len(params[k]['image_names'])):
+            rgb = np.array(Image.open(database_base_path + '\\' + img))
+
+            new_class_params[i][:-1] = params[k]['params'][i]
+
+            if isinstance(param_extractor, tuple):
+                new_class_params[i][-1] = param_extractor[0](rgb, *args, **{**param_extractor[1], **kwargs})
+            else:
+                new_class_params[i][-1] = param_extractor(rgb, *args, **kwargs)
+
+        new_params['k'] = {'image_names': params[k]['image_names'], 'params': new_class_params}
+
+    return new_params
