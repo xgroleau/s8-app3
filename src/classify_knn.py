@@ -55,11 +55,10 @@ a_file.close()
 param_labels = ["Peak position H [5:]", "Peak stdev H", "Peak Y [5:]", "Peak a [100:150]", "Peak b [100:150]",
                 "Peak height C [0:50]", "Peak height M [0:50]", "Mean S"]
 
-view_dims = (3,4,5)
+view_dims = (0,1,2)
 
-plot_sub_params(params, (0, 5, 6), param_labels)
-plot_sub_params(params, 2, param_labels)
-plot_sub_params(params, 3, param_labels)
+plot_sub_params(params, (0, 1, 2), param_labels)
+plot_sub_params(params, (3, 4), param_labels)
 
 #params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
 #params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
