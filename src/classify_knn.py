@@ -2,7 +2,7 @@ import os
 import sys
 
 from src.classifier.bayesian_classifier import BayesianClassifier
-from src.classifier.confusion_matrix import create_confusion_matrix
+from src.classifier.classify import classify
 from src.classifier.kmean import kmean_clustering
 from src.classifier.knn import KNNClassifier
 from src.classifier.subclasses import subclass, subclass_param_threshold
@@ -52,7 +52,7 @@ a_file.close()
 param_labels = ["Peak position H [5:]", "Peak stdev H", "Peak Y [5:]", "Peak a [100:150]", "Peak b [100:150]",
                 "Peak height C [0:50]", "Peak height M [0:50]", "Mean S"]
 
-
+view_dims = (3,4,5)
 
 #plot_sub_params(params, (0, 5, 6), param_labels)
 #plot_sub_params(params, 2, param_labels)
@@ -66,11 +66,8 @@ class_representant = kmean_clustering(params, n_cluster=50)
 kNN = KNNClassifier(n_neighbors=1)
 kNN.fit(class_representant)
 
-#plot_sub_params(params, (0, 1, 2), param_labels, cluster_center=class_representant, title="012")
-#plot_sub_params(params, (3, 4, 5), param_labels, cluster_center=class_representant, title="345")
-#plot_sub_params(params, (6, 7), param_labels, cluster_center=class_representant, title="67")
+plot_sub_params(params, view_dims, param_labels, cluster_center=class_representant, title="012")
 
-create_confusion_matrix(params, kNN.predict, display=True, normalize="true")
-create_confusion_matrix(params, kNN.predict, display=True, agregate=True, normalize="true")
+classify(params, kNN.predict, normalize_confusion_matrix="true", visualize_errors_dims=view_dims)
 
 plt.show()
