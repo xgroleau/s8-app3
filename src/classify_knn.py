@@ -1,22 +1,24 @@
 import os
 import sys
 
-from src.classifier.bayesian_classifier import BayesianClassifier
-from src.classifier.classify import classify, confusion_performance
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
+
+from src.classifier.subclasses import subclass, subclass_param_threshold
+from src.classifier.classify import classify
 from src.classifier.kmean import kmean_clustering
 from src.classifier.knn import KNNClassifier, plot_knn_performance
-from src.classifier.subclasses import subclass, subclass_param_threshold
 from src.images import ImageCollection
 from src.params.extract_param import *
 from src.params.param import param_nd
 import matplotlib.pyplot as plt
-
 import pickle as pkl
+from src.visualization import plot_sub_params
 
-from src.visualization import plot_sub_params, histogrammes
 
 RELOAD_PARAMS = False
-PLOT_PERF_BY_N_REP = True
+PLOT_PERF_BY_N_REP = False
 
 sys.path.append('../')
 CDIR = os.path.dirname(os.path.realpath(__file__))
@@ -55,16 +57,16 @@ param_labels = ["Peak position H [5:]", "Peak stdev H", "Peak Y [5:]", "Peak a [
 
 view_dims = (3,4,5)
 
-#plot_sub_params(params, (0, 5, 6), param_labels)
-#plot_sub_params(params, 2, param_labels)
-#plot_sub_params(params, 3, param_labels)
+plot_sub_params(params, (0, 5, 6), param_labels)
+plot_sub_params(params, 2, param_labels)
+plot_sub_params(params, 3, param_labels)
 
 #params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
 #params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
 #params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
 
 if PLOT_PERF_BY_N_REP:
-    plot_knn_performance(params, 5, 200)
+    plot_knn_performance(params, 5, 200, save_path="../figures/knn-performance")
 
 class_representant = kmean_clustering(params, n_cluster=20)
 kNN = KNNClassifier(n_neighbors=1)

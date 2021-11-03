@@ -1,6 +1,7 @@
 from itertools import chain, repeat
 import random
 from typing import Dict
+import os
 
 from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
@@ -63,7 +64,10 @@ class KNNClassifier:
         return np.array([self.labels[int(e)] for e in predictions])
 
 
-def plot_knn_performance(params, step, max):
+def plot_knn_performance(params, step, max, save_path=None):
+    """
+    Plot the performance of the KNN by using the mean of the diagonal of the confusion matrix
+    """
     performance = []
     n_cluster = []
     for i in range(step, max, step):
@@ -79,4 +83,6 @@ def plot_knn_performance(params, step, max):
     plt.xlabel("Nombre de représentant calculé par K-Moyennes")
     plt.ylabel("Moyenne de la diagonale de la matrice de confusion")
     plt.plot(n_cluster, performance)
+    if save_path:
+        plt.savefig(f'{os.getcwd()}/{save_path}.png')
 

@@ -1,6 +1,10 @@
 import os
 import sys
 
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
+
 from src.classifier.bayesian_classifier import BayesianClassifier
 from src.classifier.classify import classify
 from src.classifier.subclasses import subclass, subclass_param_threshold
