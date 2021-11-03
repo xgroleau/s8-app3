@@ -4,6 +4,10 @@ from typing import Dict
 
 from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
+import matplotlib.pyplot as plt
+
+from src.classifier.classify import confusion_performance
+from src.classifier.kmean import kmean_clustering
 
 
 def _format_knn(classes: Dict[str, np.ndarray]):
@@ -57,4 +61,22 @@ class KNNClassifier:
         """
         predictions = self.classifier.predict(parameters)
         return np.array([self.labels[int(e)] for e in predictions])
+
+
+def plot_knn_performance(params, step, max):
+    performance = []
+    n_cluster = []
+    for i in range(step, max, step):
+        class_representant = kmean_clustering(params, n_cluster=i)
+        kNN = KNNClassifier(n_neighbors=1)
+        kNN.fit(class_representant)
+        perf = confusion_performance(params, kNN.predict, normalize_confusion_matrix="true")
+        performance.append(perf)
+        n_cluster.append(i)
+
+    plt.figure()
+    plt.title("Performance de 1-PPV en fonction du nombre de représentants")
+    plt.xlabel("Nombre de représentant calculé par K-Moyennes")
+    plt.ylabel("Moyenne de la diagonale de la matrice de confusion")
+    plt.plot(n_cluster, performance)
 

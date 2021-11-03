@@ -26,9 +26,7 @@ def classify(params: Dict[str, Dict], fit_function: Callable[[np.ndarray, any, a
         classified_params = {}
         for k in labels:
             in_class = np.where(fitted_labels == k)
-            correctly_classified = np.where(fitted_labels == expected_labels)
-            correctly_classified_in_class = np.intersect1d(in_class[0], correctly_classified[0])
-            classified_params[k] = {'params': flattened_params[correctly_classified_in_class]}
+            classified_params[k] = {'params': flattened_params[in_class]}
 
         classified_params['errors'] = {'params': flattened_params[np.where(fitted_labels != expected_labels)]}
 
@@ -57,3 +55,16 @@ def display_errors(expected_labels, fitted_labels, image_names):
     print("Wrongly classified images: ")
     for error_idx in errors[0]:
         print(f'{image_names[error_idx]} classified as {fitted_labels[error_idx]}')
+
+
+def confusion_performance(params: Dict[str, Dict], fit_function: Callable[[np.ndarray, any, any], str],
+             normalize_confusion_matrix="true", *args, **kwargs):
+    labels = [k for k in params.keys()]
+    image_names = [n for k in params.keys() for n in params[k]['image_names']]
+    expected_labels = np.array([k for k in params.keys() for _ in range(len(params[k]['params']))])
+    flattened_params = np.concatenate([v['params'] for v in params.values()])
+    fitted_labels = fit_function(flattened_params, *args, **kwargs)
+
+    confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels, labels=labels, normalize=normalize_confusion_matrix)
+    val = np.array((confusion_matrix[0,0], confusion_matrix[1,1], confusion_matrix[2,2]))
+    return np.mean(val)
