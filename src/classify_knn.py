@@ -18,7 +18,7 @@ from src.visualization import plot_sub_params
 
 
 RELOAD_PARAMS = False
-PLOT_PERF_BY_N_REP = False
+PLOT_PERF_BY_N_REP = True
 
 sys.path.append('../')
 CDIR = os.path.dirname(os.path.realpath(__file__))
