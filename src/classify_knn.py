@@ -54,18 +54,13 @@ a_file = open("params.pkl", "rb")
 params = pkl.load(a_file)
 a_file.close()
 
-param_labels = ["Peak position H [5:]", "Peak stdev H", "Peak Y [5:]", "Peak a [100:150]", "Peak b [100:150]",
-                "Peak height C [0:50]", "Peak height M [0:50]", "Mean S"]
+param_labels = ['0', '1','2','3','4','5','6','7','8','9','10','11','12']
 
-view_dims = (3,4,5)
+view_dims = (0,1,2)
 
 plot_sub_params(params, (0, 1, 2), param_labels)
 plot_sub_params(params, (3, 4, 5), param_labels)
 plot_sub_params(params, (6, 7), param_labels)
-
-#params = subclass(params, 'coast', subclass_param_threshold, param_idx=0, threshold=75)
-#params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=75)
-#params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=100)
 
 if PLOT_PERF_BY_N_REP:
     plot_knn_performance(params, 5, 200, save_path="../figures/knn-performance")
