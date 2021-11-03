@@ -33,7 +33,7 @@ def histogrammes(indexes: iter, im_coll: ImageCollection, n_bins: int = 256):
         min_ab = -110
         max_ab = 110
         imageLabhist = np.zeros(imageLab.shape)
-        imageLabhist[:,:,0] = np.round(imageLab[:,:,0]*(n_bins-1)/max_L) #L has all values between 0 and 100
+        imageLabhist[:,:,0] = np.round(imageLab[:,:,0]*(n_bins-1)/max_L) #L has all values between 0 and 100 skic.rgb2lab
         imageLabhist[:,:,1] = np.round((imageLab[:,:,1]-min_ab)*(n_bins-1)/(max_ab-min_ab)) #ab has all values between -110 and 110
         imageLabhist[:, :, 2] = np.round((imageLab[:, :, 2] - min_ab) * (n_bins - 1) / (max_ab - min_ab))  # ab has all values between -110 and 110
 
@@ -71,10 +71,10 @@ def histogrammes(indexes: iter, im_coll: ImageCollection, n_bins: int = 256):
         ax[num_images,1].set(xlabel='pixels', ylabel='compte par valeur d\'intensité')
         ax[num_images,1].set_title(f'histogramme HSV de {image_name}')
 
-        x_values = range(start, end-1)
-        ax[num_images, 2].plot(x_values, np.diff(smooth(pixel_valuesRGB[0, start:end], 5)), c='red')
-        ax[num_images, 2].plot(x_values, np.diff(smooth(pixel_valuesRGB[1, start:end], 5)), c='green')
-        ax[num_images, 2].plot(x_values, np.diff(smooth(pixel_valuesRGB[2, start:end], 5)), c='blue')
+        x_values = range(start, end)
+        ax[num_images, 2].plot(x_values, smooth(pixel_valuesRGB[0, start:end], 5), c='red')
+        ax[num_images, 2].plot(x_values, smooth(pixel_valuesRGB[1, start:end], 5), c='green')
+        ax[num_images, 2].plot(x_values, smooth(pixel_valuesRGB[2, start:end], 5), c='blue')
         ax[num_images, 2].set(xlabel='pixels', ylabel='compte par valeur d\'intensité')
         ax[num_images, 2].set_title(f'histogramme LAB de {image_name}')
 

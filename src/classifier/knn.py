@@ -6,8 +6,7 @@ from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 
 
-def knn_classifier(classes: Dict[str, np.ndarray], n_neighbors=5):
-    knn_class = KNeighborsClassifier(n_neighbors=n_neighbors)
+def _format_knn(classes: Dict[str, np.ndarray]):
     total_length = sum([len(x) for x in classes.values()])
     random_key = random.sample(classes.keys(), 1)[0]
     try:
@@ -30,4 +29,32 @@ def knn_classifier(classes: Dict[str, np.ndarray], n_neighbors=5):
         class_dict[k] = i
         i += 1
     y = np.fromiter(chain.from_iterable(repeat(class_dict[k], classes[k].shape[0]) for k in classes.keys()), dtype=float)
-    return knn_class.fit(x, y)
+    return x, y
+
+
+class KNNClassifier:
+    """
+    Class that classify using K nearest  neighbors
+    """
+    def __init__(self, n_neighbors=5):
+        """
+        Init the classifier with a given number of neighbors to classify in the KNN algorithm
+        """
+        self.classifier = KNeighborsClassifier(n_neighbors=n_neighbors)
+        self.labels = []
+
+    def fit(self, classes: Dict[str, np.ndarray]):
+        """
+        Fit the classifier given a training set of classes
+        """
+        x, y = _format_knn(classes)
+        self.classifier.fit(x, y)
+        self.labels = list(classes.keys())
+
+    def predict(self, parameters, *args, **kwargs):
+        """
+        Predict given an array of parameters. Return the predictions
+        """
+        predictions = self.classifier.predict(parameters)
+        return [self.labels[int(e)] for e in predictions]
+
