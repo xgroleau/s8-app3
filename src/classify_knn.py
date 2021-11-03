@@ -31,12 +31,11 @@ street = ImageCollection(base_path=images_path, filter_name="street")
 categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
 if RELOAD_PARAMS:
-    params = param_nd(categorized_collection, [(extractor_mean, {'dimension': 1, 'base_function': skic.rgb2xyz}),
+    params = param_nd(categorized_collection, [
                                                (extractor_mean, {'dimension': 2, 'base_function': rgb_to_cmyk}),
                                                (extractor_median, {'dimension': 2, }),
                                                (extractor_std, {'dimension': 1, }),
                                                (extractor_mean, {'dimension': 0, }),
-                                               (extractor_mean, {'dimension': 1, }),
                                                (extractor_mean, {'dimension': 2, }),
                                                (extractor_mean, {'dimension': 2, 'base_function': skic.rgb2yuv}),
                                                (extractor_std, {'dimension': 2, 'base_function': skic.rgb2hsv})
@@ -58,14 +57,11 @@ param_labels = ['0', '1','2','3','4','5','6','7','8','9','10','11','12']
 
 view_dims = (0,1,2)
 
-params = subclass(params, 'coast', subclass_param_threshold, param_idx=7, threshold=0.05)
+params = subclass(params, 'coast', subclass_param_threshold, param_idx=5, threshold=0.05)
 
-plot_sub_params(params, (0, 1, 2), param_labels)
-plot_sub_params(params, (3, 4, 5), param_labels)
-plot_sub_params(params, (6, 7), param_labels)
 
 if PLOT_PERF_BY_N_REP:
-    plot_knn_performance(params, 5, 200, save_path="../figures/knn-performance")
+    plot_knn_performance(params, 5, 70, save_path="../figures/knn-performance")
 
 class_representant = kmean_clustering(params, n_cluster=30)
 kNN = KNNClassifier(n_neighbors=1)
