@@ -11,7 +11,7 @@ from src.classifier.subclasses import subclass, subclass_param_threshold
 from src.images import ImageCollection, export_collection
 from src.metrics.fisher_criterion import analyze_fisher_discriminant
 from src.params.extract_param import *
-from src.params.param import param_nd
+from src.params.param import param_nd, param_remove_unused
 import matplotlib.pyplot as plt
 import pickle as pkl
 from src.visualization import plot_sub_params
@@ -51,7 +51,6 @@ else:
     params = pkl.load(f)
     f.close()
 
-
 analyze_fisher_discriminant(params)
 
 bayes = BayesianClassifier(params, bins=1)
@@ -63,10 +62,15 @@ plot_sub_params(params, view)
 params = subclass(params, 'coast', subclass_param_threshold, param_idx=5, threshold=0.05)
 plot_sub_params(params, view, param_labels)
 
+cost_matrix = np.array([[0, 1, 1, 1], [1, 0, 2, 1], [1, 1, 0, 1], [1, 1, 1, 0]])
 
 bayes2 = BayesianClassifier(params, bins=10)
-classify(params, bayes2.fit_multiple, likelihood='arbitrary',  visualize_errors_dims=view)
+classify(params, bayes2.fit_multiple, likelihood='gaussian', visualize_errors_dims=view, cost_matrix=cost_matrix)
 export_collection({k: v['image_names'] for k, v in params.items()}, "collection.pkl")
 analyze_fisher_discriminant(params)
+
+params = param_remove_unused(params, [0, 1, 2, 5, 6])
+bayes3 = BayesianClassifier(params, bins=10)
+bayes3.display_decision_boundary((0,1), likelihood='gaussian', cost_matrix=cost_matrix)
 
 plt.show()
