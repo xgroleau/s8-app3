@@ -66,7 +66,7 @@ bayes = BayesianClassifier(params, bins=1)
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
-view = (0, 5)
+view = (4,1)
 
 # for k, v in params.items():
 #     params[k]['params'][:, 0] = (params[k]['params'][:, 0] + 50) % 255
@@ -74,7 +74,7 @@ view = (0, 5)
 # for i in range(8):
 #     plot_sub_params(params, i, param_labels)
 
-plot_sub_params(params, view, param_labels)
+plot_sub_params(params, view)
 #plot_sub_params(params, 2, param_labels)
 #plot_sub_params(params, 3, param_labels)
 # params = subclass(params, 'coast', subclass_param_threshold, param_idx=1, threshold=89)
@@ -84,14 +84,15 @@ plot_sub_params(params, view, param_labels)
 # params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=6000)
 #params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=50)
 #plot_sub_params(params, 3, param_labels)
-plot_sub_params(params, view, param_labels)
+plot_sub_params(params, view)
 #plot_sub_params(params, 2, param_labels)
 
-params = param_remove_unused(params, [0, 5])
+#params = param_remove_unused(params, [0, 5])
 
-bayes2 = BayesianClassifier(params, bins=10)
-create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=False, likelihood='arbitrary')
-create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='arbitrary')
+bayes2 = BayesianClassifier(params, bins=1)
+
+create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=False, likelihood='gaussian')
+create_confusion_matrix(params, bayes2.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
 export_collection({k: v['image_names'] for k, v in params.items()}, "collection.pkl")
 

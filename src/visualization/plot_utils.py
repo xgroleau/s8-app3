@@ -50,15 +50,16 @@ def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None)
     plt.legend()
 
 
-def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", colors=None):
+def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", ellipsis=True, colors=None):
     colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'brown', 'grey']
 
     plt.figure()
     ax = plt.axes()
     for i, (k, e) in enumerate(params.items()):
         ax.scatter(e['params'][:, 0], e['params'][:, 1], alpha=0.5, marker='x', color=colors[i], label=k)
-        confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=1)
-        confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=3)
+        if ellipsis:
+            confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=1)
+            confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=3)
 
     plt.title(title)
     ax.set_xlabel(xlabel)
