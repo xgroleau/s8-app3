@@ -32,7 +32,7 @@ categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
 param_labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
 
-RELOAD_PARAMS = True
+RELOAD_PARAMS = False
 if RELOAD_PARAMS:
     params = param_nd(categorized_collection, [(extractor_mean, {'dimension': 2, 'base_function': rgb_to_cmyk}),
                                                (extractor_median, {'dimension': 2, }),
@@ -64,8 +64,8 @@ params = subclass(params, 'coast', subclass_param_threshold, param_idx=5, thresh
 plot_sub_params(params, view, param_labels)
 
 
-bayes2 = BayesianClassifier(params, bins=1)
-classify(params, bayes2.fit_multiple, likelihood='gaussian', visualize_errors_dims=view)
+bayes2 = BayesianClassifier(params, bins=10)
+classify(params, bayes2.fit_multiple, likelihood='arbitrary',  visualize_errors_dims=view)
 export_collection({k: v['image_names'] for k, v in params.items()}, "collection.pkl")
 analyze_fisher_discriminant(params)
 
