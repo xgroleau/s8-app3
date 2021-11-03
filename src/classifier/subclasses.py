@@ -40,7 +40,8 @@ def aggregate_subclasses(labels):
     """
     Aggregates the labels, takes labels of subclasses and aggregates them in the original classes
     """
+    label_tmp = []
     for i in range(len(labels)):
-        labels[i] = labels[i].split("_")[0]
+        label_tmp.append(labels[i].split("_")[0])
 
-    return labels
+    return label_tmp

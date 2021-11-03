@@ -1,6 +1,10 @@
 import os
 import sys
 
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
+
 from src.classifier.bayesian_classifier import BayesianClassifier
 from src.classifier.classify import classify
 from src.classifier.subclasses import subclass, subclass_param_threshold
@@ -74,12 +78,13 @@ view = (0,1,2)
 # for i in range(8):
 #     plot_sub_params(params, i, param_labels)
 
-plot_sub_params(params, view, param_labels)
-# plot_sub_params(params, 2, param_labels)
-# plot_sub_params(params, 3, param_labels)
-# params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=0.5)
-params = subclass(params, 'coast', subclass_param_threshold, param_idx=1, threshold=0.05)
-# params = subclass(params, 'street', subclass_param_threshold, param_idx=3, threshold=0.4)
+plot_sub_params(params, view)
+#plot_sub_params(params, 2, param_labels)
+#plot_sub_params(params, 3, param_labels)
+params = subclass(params, 'coast', subclass_param_threshold, param_idx=7, threshold=0.05)
+# params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=0.3)
+# params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=0.3)
+# params = subclass(params, 'street_0', subclass_param_threshold, param_idx=4, threshold=4000)
 # params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=6000)
 # params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=50)
 # plot_sub_params(params, 3, param_labels)
