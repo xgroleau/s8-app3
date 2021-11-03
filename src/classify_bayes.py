@@ -31,11 +31,11 @@ param_labels = ['0', '1','2','3','4','5','6','7','8','9','10','11','12']
 
 RELOAD_PARAMS = False
 if RELOAD_PARAMS:
-    params = param_nd(categorized_collection, [(extractor_mean, {'dimension': 0, 'base_function': rgb_to_cmyk}),
-                                               (extractor_mean, {'dimension': 1, 'base_function': rgb_to_cmyk}),
-                                               (extractor_mean, {'dimension': 2, 'base_function': rgb_to_cmyk}),
+    params = param_nd(categorized_collection, [
+                                               (extractor_mean, {'dimension': 1, 'base_function': skic.rgb2yuv}),
+                                               (extractor_mean, {'dimension': 2, 'base_function': skic.rgb2yuv}),
                                                (extractor_median, {'dimension': 2, }),
-                                               (extract_peak_hsv, {'dimension': 0, 'subset_start': 5}),
+                                               (extractor_std, {'dimension': 0, }),
                                                (extractor_std, {'dimension': 1, }),
                                                ], num_images=-1)
 
@@ -56,7 +56,7 @@ else:
 # yuv 3,4,5, 9
 analyze_fisher_discriminant(params)
 
-# params = param_remove_unused(params, [0, 1, 2, 6,7,8,10,11])
+# params = param_remove_unused(params, [2])
 
 # params = param_nd(categorized_collection, [(extract_peak_hsv, {'subset_start': 0, 'dimension': 0}),
 #                                            (extract_peak_lab, {'dimension': 2}), ], num_images=-1)
@@ -67,7 +67,7 @@ bayes = BayesianClassifier(params, bins=1)
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=False, likelihood='gaussian')
 #create_confusion_matrix(params, bayes.fit_multiple, display=True, agregate=True, likelihood='gaussian')
 
-view = (1,2,3)
+view = (0,1,2)
 
 # for k, v in params.items():
 #     params[k]['params'][:, 0] = (params[k]['params'][:, 0] + 50) % 255
@@ -78,9 +78,9 @@ view = (1,2,3)
 plot_sub_params(params, view, param_labels)
 #plot_sub_params(params, 2, param_labels)
 #plot_sub_params(params, 3, param_labels)
-params = subclass(params, 'forest', subclass_param_threshold, param_idx=4, threshold=100)
-params = subclass(params, 'street', subclass_param_threshold, param_idx=4, threshold=100)
-params = subclass(params, 'coast', subclass_param_threshold, param_idx=4, threshold=100)
+# params = subclass(params, 'forest', subclass_param_threshold, param_idx=0, threshold=0.5)
+# params = subclass(params, 'street', subclass_param_threshold, param_idx=0, threshold=0.5)
+params = subclass(params, 'coast', subclass_param_threshold, param_idx=1, threshold=0.1)
 # params = subclass(params, 'street', subclass_param_threshold, param_idx=3, threshold=0.4)
 # params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=6000)
 #params = subclass(params, 'forest_0', subclass_param_threshold, param_idx=2, threshold=50)
