@@ -56,5 +56,5 @@ class KNNClassifier:
         Predict given an array of parameters. Return the predictions
         """
         predictions = self.classifier.predict(parameters)
-        return [self.labels[int(e)] for e in predictions]
+        return np.array([self.labels[int(e)] for e in predictions])
 

@@ -1,5 +1,13 @@
+from typing import Tuple
+
 import numpy as np
 import scipy.stats as stats
+
+from src.visualization import plot_2d
+
+
+def plot_nd(categorized_params, ellipsis):
+    pass
 
 
 class BayesianClassifier:
@@ -14,8 +22,8 @@ class BayesianClassifier:
         self._total_training_set_counts = np.sum([c['params'].shape[0] for c in training_set.values()])
 
         self._classes_count = len(training_set)
-
         self._class_labels = [c_key for c_key in training_set.keys()]
+        self._dims = training_set[self._class_labels[0]]['params'].shape[1]
 
         # Extract apriori probability for each class based on number of samples or user-provided probabilities P(C_i)
         self._apriori = apriori if apriori is not None else self._training_set_counts / self._total_training_set_counts
@@ -65,6 +73,26 @@ class BayesianClassifier:
                 risk[i] += cost_matrix[i, j] * likelihoods[j] * self._apriori[j]
 
         return self._class_labels[np.argmin(risk)]
+
+    def display_decision_boundary(self, param_indexes: Tuple, likelihood='arbitrary', cost_matrix=None):
+        num_points = 10000
+        test_data = np.zeros((self._dims, num_points))
+
+        for i in range(self._dims):
+            dim_min = np.min([v['edges'][i][0] for v in self._probability_density])
+            dim_max = np.min([v['edges'][i][-1] for v in self._probability_density])
+            test_data[i] = (dim_max - dim_min) * np.random.random(num_points) + dim_min
+
+        test_data = test_data.T
+        labels = self.fit_multiple(test_data, likelihood, cost_matrix)
+
+        categorized_params = {}
+        for k in self._class_labels:
+            indexes = np.where(labels == k)
+            categorized_params[k] = {'params': test_data[indexes]}
+
+        sub_params = {k: {'params': v['params'][:, param_indexes]} for k, v in categorized_params.items()}
+        plot_2d(sub_params, ellipsis=False)
 
     def _get_arbitrary_likelihood(self, parameters, class_idx):
         bin_idx = np.zeros(parameters.shape, dtype=np.int64)

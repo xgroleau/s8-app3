@@ -53,20 +53,20 @@ def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None)
     plt.legend()
 
 
-def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", cluster_center=None, colors=None):
-    """
-    Plot a 2d scatter for the given parameters
-    """
-    colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'aqua', 'brown']
+def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", ellipsis=True, cluster_center=None,
+            colors=None):
+    colors = ['orange', 'green', 'blue', 'violet', 'cyan', 'gold', 'brown', 'grey']
 
     plt.figure()
     ax = plt.axes()
     for i, (k, e) in enumerate(params.items()):
-        ax.scatter(e['params'][:, 0], e['params'][:, 1], alpha=0.5, marker='x', color=colors[i], label=k)
-        confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=1)
-        confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=3)
-        if cluster_center:
-            ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], alpha=1, marker="o", color=colors[i], label=f"{k}_cc")
+        if k == 'errors':
+            ax.scatter(e['params'][:, 0], e['params'][:, 1], color='red', label=k)
+        else:
+            ax.scatter(e['params'][:, 0], e['params'][:, 1], marker='x', color=colors[i], label=k)
+            if cluster_center:
+                ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], alpha=1, marker="o", color=colors[i],
+                           label=f"{k}_cc")
 
     plt.title(title)
     ax.set_xlabel(xlabel)
@@ -74,18 +74,24 @@ def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", clu
     ax.legend()
 
 
-def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zlabel="z", cluster_center=None, colors=None):
+def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zlabel="z", cluster_center=None,
+            colors=None):
     """
     Plot a 3d scatter for the given parameters
     """
-    colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'aqua', 'brown']
+    colors = ['orange', 'green', 'blue', 'violet', 'cyan', 'gold', 'brown', 'grey']
 
     plt.figure()
     ax = plt.axes(projection='3d')
     for i, (k, e) in enumerate(params.items()):
-        ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], alpha=0.5, color=colors[i], label=k)
-        if cluster_center:
-            ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], cluster_center[k][:, 2], alpha=1, marker="x", color=colors[i], label=f"{k}_cc")
+        if k == 'errors':
+            ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], color='red', label=k)
+        else:
+            ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], marker="x", alpha=0.5, color=colors[i],
+                       label=k)
+            if cluster_center:
+                ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], cluster_center[k][:, 2], color=colors[i],
+                           label=f"{k}_cc")
     plt.title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
@@ -93,7 +99,7 @@ def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zla
     ax.legend()
 
 
-def plot_sub_params(params: Dict[str, np.ndarray], param_indexes: Union[Tuple, int],
+def plot_sub_params(params: Dict[str, Dict], param_indexes: Union[Tuple, int],
                     param_labels: Union[List[str], None] = None, cluster_center=None, *args, **kwargs):
     sub_params = {k: {'params': v['params'][:, param_indexes]} for k, v in params.items()}
     sub_center = None
