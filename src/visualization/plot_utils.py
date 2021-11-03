@@ -55,12 +55,17 @@ def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None)
 
 def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", ellipsis=False, cluster_center=None,
             colors=None):
+    """
+    Plots a 2D graph of all parameters according to their class. A confidence ellipsis can be added to the data
+    as well as knn cluster centers
+    """
     colors = ['orange', 'green', 'blue', 'violet', 'cyan', 'gold', 'brown', 'grey']
 
     plt.figure()
     ax = plt.axes()
     for i, (k, e) in enumerate(params.items()):
         if k == 'errors':
+            # Plot error class as red
             ax.scatter(e['params'][:, 0], e['params'][:, 1], color='red', label=k)
         else:
             ax.scatter(e['params'][:, 0], e['params'][:, 1], marker='x', color=colors[i], label=k)
@@ -106,22 +111,34 @@ def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zla
 
 def plot_sub_params(params: Dict[str, Dict], param_indexes: Union[Tuple, int],
                     param_labels: Union[List[str], None] = None, cluster_center=None, *args, **kwargs):
+    """
+    Plots the given classes as a 1D, 2D or 3D array based on the parameter indexes passed to param_indexes.
+    A list of labels corresponding to each index can be passed to automatically add labels to the graphs
+    """
+
+    # Extract wanted parameters
     sub_params = {k: {'params': v['params'][:, param_indexes]} for k, v in params.items()}
     sub_center = None
     if cluster_center:
         sub_center = {k: v[:, param_indexes] for k, v in cluster_center.items()}
 
+    # 1D graph
     if isinstance(param_indexes, int):
         xlabel = param_labels[param_indexes] if param_labels is not None else "x"
         plot_1d(sub_params, xlabel=xlabel, *args, **kwargs)
+
+    # 2D graph
     elif len(param_indexes) == 2:
         xlabel = param_labels[param_indexes[0]] if param_labels is not None else "x"
         ylabel = param_labels[param_indexes[1]] if param_labels is not None else "y"
         plot_2d(sub_params, xlabel=xlabel, ylabel=ylabel, cluster_center=sub_center, *args, **kwargs)
+
+    # 3d graph
     elif len(param_indexes) == 3:
         xlabel = param_labels[param_indexes[0]] if param_labels is not None else "x"
         ylabel = param_labels[param_indexes[1]] if param_labels is not None else "y"
         zlabel = param_labels[param_indexes[2]] if param_labels is not None else "z"
         plot_3d(sub_params, xlabel=xlabel, ylabel=ylabel, zlabel=zlabel, cluster_center=sub_center, *args, **kwargs)
+
     else:
         raise ValueError(f'Param indexes must contain between 1 and 3 parameters')

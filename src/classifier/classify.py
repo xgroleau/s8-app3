@@ -12,6 +12,14 @@ def classify(params: Dict[str, Dict], fit_function: Callable[[np.ndarray, any, a
              visualize_errors_dims: Union[Tuple, None] = None,
              *args,
              **kwargs):
+    """
+    Classifies a set of parameters using the provided fit function.
+    Displays a confusion matrix as well as a nd plot of classification errors
+    @param params: Dictionary containing all parameters to classify
+    @param fit_function: Function used to classify
+    @param normalize_confusion_matrix: Along which axis of the confusion matrix to classify "true", "expected", "all" or None.
+    @param visualize_errors_dims: Tuple of dimensions used to plot the error data
+    """
     labels = [k for k in params.keys()]
     image_names = [n for k in params.keys() for n in params[k]['image_names']]
     expected_labels = np.array([k for k in params.keys() for _ in range(len(params[k]['params']))])
@@ -34,6 +42,12 @@ def classify(params: Dict[str, Dict], fit_function: Callable[[np.ndarray, any, a
 
 
 def display_confusion_matrix(labels, expected_labels, fitted_labels, normalize="true"):
+    """
+    Displays the confusion matrix
+    @param labels: List of labels
+    @param expected_labels: Ordered array of the ground truth labels
+    @param fitted_labels: Classified labels
+    """
     confusion_matrix = metrics.confusion_matrix(expected_labels, fitted_labels, labels=labels, normalize=normalize)
     display = metrics.ConfusionMatrixDisplay(confusion_matrix, display_labels=labels)
     display.plot()

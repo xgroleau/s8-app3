@@ -24,14 +24,17 @@ sys.path.append('../')
 CDIR = os.path.dirname(os.path.realpath(__file__))
 images_path = os.path.join(CDIR, '../baseDeDonneesImages')
 
+# Load images
 coast = ImageCollection(base_path=images_path, filter_name="coast")
 forest = ImageCollection(base_path=images_path, filter_name="forest")
 street = ImageCollection(base_path=images_path, filter_name="street")
 
 categorized_collection = {"coast": coast, "forest": forest, "street": street}
 
-param_labels = ['Moyenne Jaune', 'Médiane Bleu', 'Écart-type Vert', 'Moyenne Rouge', 'Moyenne Bleu', 'Moyenne Projection en Rouge', 'Écart-type de la luminosité']
+param_labels = ['Moyenne Jaune', 'Médiane Bleu', 'Écart-type Vert', 'Moyenne Rouge', 'Moyenne Bleu',
+                'Moyenne Projection en Rouge', 'Écart-type de la luminosité']
 
+# Extract parameters from images or load them from the .pkl
 RELOAD_PARAMS = False
 if RELOAD_PARAMS:
     params = param_nd(categorized_collection, [(extractor_mean, {'dimension': 2, 'base_function': rgb_to_cmyk}),
@@ -51,27 +54,27 @@ else:
     params = pkl.load(f)
     f.close()
 
-analyze_fisher_discriminant(params)
+# Tuple of dimensions to visualize
+view = (1, 3)
 
-bayes = BayesianClassifier(params, bins=1)
+plot_sub_params(params, view, param_labels)
 
-view = (1,3)
-
-plot_sub_params(params, view)
-
+# Extract subclasses
 params = subclass(params, 'coast', subclass_param_threshold, param_idx=5, threshold=0.05)
 params = subclass(params, 'forest', subclass_param_threshold, param_idx=5, threshold=0.05)
+
+# Visualization
 plot_sub_params(params, view, param_labels, ellipsis=True)
-
-cost_matrix = np.array([[0, 1, 1, 1], [1, 0, 2, 1], [1, 1, 0, 1], [1, 1, 1, 0]])
-
-bayes2 = BayesianClassifier(params, bins=10)
-classify(params, bayes2.fit_multiple, likelihood='gaussian', visualize_errors_dims=view)
-export_collection({k: v['image_names'] for k, v in params.items()}, "collection.pkl")
 analyze_fisher_discriminant(params)
 
+# Create the classifier and classify images
+bayes2 = BayesianClassifier(params, bins=10)
+classify(params, bayes2.fit_multiple, likelihood='gaussian', visualize_errors_dims=view)
+#export_collection({k: v['image_names'] for k, v in params.items()}, "collection.pkl")
+
+# Plot bayes boundaries by creating a new classifier with only two of the original dimensions
 params = param_remove_unused(params, [0, 1, 2, 5, 6])
 bayes3 = BayesianClassifier(params, bins=10)
-bayes3.display_decision_boundary((0,1), likelihood='arbitrary')
+bayes3.display_decision_boundary((0, 1), likelihood='gaussian')
 
 plt.show()

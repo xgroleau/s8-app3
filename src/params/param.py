@@ -2,7 +2,6 @@ from typing import Callable, Union, Dict, List, Tuple
 import numpy as np
 from PIL import Image
 from ..images import ImageCollection, random_image_selector
-from ..visualization import plot_1d
 from tqdm import tqdm
 
 ParamExtractor_t = Union[

@@ -4,6 +4,11 @@ import numpy as np
 
 
 def analyze_fisher_discriminant(params: Dict[str, Dict]):
+    """
+    Calculates and displays the Fisher Criterion for each pair of classes along each dimension
+    @param params:
+    @return:
+    """
     np.set_printoptions(precision=3)
     np.set_printoptions(suppress=True)
     class_labels = [k for k in params.keys()]
@@ -18,6 +23,9 @@ def analyze_fisher_discriminant(params: Dict[str, Dict]):
 
 
 def compute_fisher_criterion(params: List[np.ndarray]):
+    """
+    Computes the Fisher Criterion given a list of points along an axis for each class
+    """
     apriori = np.array([v.shape[0] for v in params])
     apriori = apriori / np.sum(apriori)
 
@@ -29,8 +37,3 @@ def compute_fisher_criterion(params: List[np.ndarray]):
     criterion = np.sum((((means-mean_all)**2).T*apriori).T, axis=0) / np.sum((sigmas.T*apriori).T, axis=0)
 
     return criterion
-
-
-
-
-#compute_fisher_criterion([np.array([[1,5], [2,5], [1,10]]), np.array([[10,101], [11,155], [8,120]])])

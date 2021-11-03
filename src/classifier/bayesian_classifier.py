@@ -58,6 +58,7 @@ class BayesianClassifier:
 
         risk = np.zeros(self._classes_count)
 
+        # Precaculate likelihoods for every class (P(x|Ci))
         if likelihood == 'gaussian':
             likelihoods = [self._get_gaussian_likelihood(parameters, i) for i in range(self._classes_count)]
         elif likelihood == 'arbitrary':
@@ -65,6 +66,7 @@ class BayesianClassifier:
         else:
             raise ValueError(f'Likelihood: {likelihood} not supported. Supported values are "gaussian" or "arbitrary"')
 
+        # Compute the Bayes risk
         for i in range(self._classes_count):
             for j in range(self._classes_count):
                 if i == j:
@@ -75,9 +77,14 @@ class BayesianClassifier:
         return self._class_labels[np.argmin(risk)]
 
     def display_decision_boundary(self, param_indexes: Tuple, likelihood='arbitrary', cost_matrix=None):
+        """
+        Displays the decision boundary for the given parameters.
+        (For best results, use on a classifier that only has the amount of parameters used for visualization)
+        """
         num_points = 10000
         test_data = np.zeros((self._dims, num_points))
 
+        # Generate random data spanning the range of the training data
         for i in range(self._dims):
             dim_min = np.min([v['edges'][i][0] for v in self._probability_density])
             dim_max = np.min([v['edges'][i][-1] for v in self._probability_density])
@@ -86,15 +93,20 @@ class BayesianClassifier:
         test_data = test_data.T
         labels = self.fit_multiple(test_data, likelihood, cost_matrix)
 
+        # Categorize the data using the classifier
         categorized_params = {}
         for k in self._class_labels:
             indexes = np.where(labels == k)
             categorized_params[k] = {'params': test_data[indexes]}
 
+        # Plot classified data
         sub_params = {k: {'params': v['params'][:, param_indexes]} for k, v in categorized_params.items()}
         plot_2d(sub_params, ellipsis=False)
 
     def _get_arbitrary_likelihood(self, parameters, class_idx):
+        """
+        Returns the likelihood that a set of parameters belongs to a class using a histogram as a lookup
+        """
         bin_idx = np.zeros(parameters.shape, dtype=np.int64)
         for i in range(parameters.shape[0]):
             bin_idx[i] = self._probability_density[class_idx]['edges'][i].searchsorted(parameters[i], 'left')
@@ -106,4 +118,7 @@ class BayesianClassifier:
             return self._probability_density[class_idx]['hist'].item(tuple(bin_idx))
 
     def _get_gaussian_likelihood(self, parameters, class_idx):
+        """
+        Returns the likelihood that a set of parameters belongs to a class using a multivariate normal distribution
+        """
         return self._normal_distributions[class_idx].pdf(parameters)
