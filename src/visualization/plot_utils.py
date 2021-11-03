@@ -51,15 +51,18 @@ def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None)
 
 
 def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", ellipsis=True, colors=None):
-    colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'brown', 'grey']
+    colors = ['orange', 'green', 'blue', 'violet', 'cyan', 'gold', 'brown', 'grey']
 
     plt.figure()
     ax = plt.axes()
     for i, (k, e) in enumerate(params.items()):
-        ax.scatter(e['params'][:, 0], e['params'][:, 1], alpha=0.5, marker='x', color=colors[i], label=k)
-        if ellipsis:
-            confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=1)
-            confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=3)
+        if k == 'errors':
+            ax.scatter(e['params'][:, 0], e['params'][:, 1], color='red', label=k)
+        else:
+            ax.scatter(e['params'][:, 0], e['params'][:, 1], alpha=0.5, marker='x', color=colors[i], label=k)
+            if ellipsis:
+                confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=1)
+                confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=3)
 
     plt.title(title)
     ax.set_xlabel(xlabel)
@@ -71,7 +74,10 @@ def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zla
     plt.figure()
     ax = plt.axes(projection='3d')
     for k, e in params.items():
-        ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], alpha=0.5, label=k)
+        if k == 'errors':
+            ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], color='red', label=k)
+        else:
+            ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], marker='x', alpha=0.5, label=k)
     plt.title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
@@ -79,7 +85,7 @@ def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zla
     ax.legend()
 
 
-def plot_sub_params(params: Dict[str, np.ndarray], param_indexes: Union[Tuple, int],
+def plot_sub_params(params: Dict[str, Dict], param_indexes: Union[Tuple, int],
                     param_labels: Union[List[str], None] = None, *args, **kwargs):
     sub_params = {k: {'params': v['params'][:, param_indexes]} for k, v in params.items()}
 
