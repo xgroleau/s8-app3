@@ -18,7 +18,7 @@ from src.visualization import plot_sub_params
 
 
 RELOAD_PARAMS = False
-PLOT_PERF_BY_N_REP = True
+PLOT_PERF_BY_N_REP = False
 
 sys.path.append('../')
 CDIR = os.path.dirname(os.path.realpath(__file__))
@@ -29,6 +29,9 @@ forest = ImageCollection(base_path=images_path, filter_name="forest")
 street = ImageCollection(base_path=images_path, filter_name="street")
 
 categorized_collection = {"coast": coast, "forest": forest, "street": street}
+
+param_labels = ['Moyenne Jaune', 'Médiane Bleu', 'Écart-type Vert', 'Moyenne Rouge', 'Moyenne Bleu', 'Moyenne Projection en Rouge', 'Écart-type de la luminosité']
+
 
 if RELOAD_PARAMS:
     params = param_nd(categorized_collection, [
@@ -53,11 +56,11 @@ a_file = open("params.pkl", "rb")
 params = pkl.load(a_file)
 a_file.close()
 
-param_labels = ['0', '1','2','3','4','5','6','7','8','9','10','11','12']
+view_dims = (3, 4)
 
-view_dims = (0,1,2)
-
+# Create a "subclass" to allow twice the number of cluster center for a certain class
 params = subclass(params, 'coast', subclass_param_threshold, param_idx=5, threshold=0.05)
+params = subclass(params, 'forest', subclass_param_threshold, param_idx=5, threshold=0.05)
 
 
 if PLOT_PERF_BY_N_REP:
@@ -66,7 +69,7 @@ if PLOT_PERF_BY_N_REP:
 class_representant = kmean_clustering(params, n_cluster=30)
 kNN = KNNClassifier(n_neighbors=1)
 kNN.fit(class_representant)
-plot_sub_params(params, view_dims, param_labels, cluster_center=class_representant, title="012")
+plot_sub_params(params, view_dims, param_labels, cluster_center=class_representant, title="Représentant des classes pour la moyenne R et B")
 
 classify(params, kNN.predict, normalize_confusion_matrix="true", visualize_errors_dims=view_dims)
 

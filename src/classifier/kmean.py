@@ -11,6 +11,6 @@ def kmean_clustering(classes: Dict[str, np.ndarray], n_cluster=5):
     """
     representant = {}
     for key in classes:
-        knn_class = KMeans(n_cluster).fit(classes[key]['params'])
+        knn_class = KMeans(n_cluster, n_init=50, max_iter=500, tol=1e-5).fit(classes[key]['params'])
         representant[key] = knn_class.cluster_centers_
     return representant
