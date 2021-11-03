@@ -12,6 +12,9 @@ ParamExtractor_t = Union[
 
 
 def get_2d_reshaped(arr: np.ndarray):
+    """
+    Reshape the array to 2d if it's in 1d
+    """
     if len(arr.shape) > 1:
         return arr
     else:
@@ -19,6 +22,9 @@ def get_2d_reshaped(arr: np.ndarray):
 
 
 def group_classes(list_classes: List[Dict[str, np.ndarray]]):
+    """
+    Group the different classes and merge their parameters together
+    """
     grouped_classes = {}
     for e_class in list_classes:
         for key in e_class:
@@ -30,36 +36,12 @@ def group_classes(list_classes: List[Dict[str, np.ndarray]]):
     return grouped_classes
 
 
-def param_1d(img_coll: Dict[str, ImageCollection], param_extraction: ParamExtractor_t, num_images=200, bins=100,
-             title="", xlabel="", *args, **kwargs):
-    params = {}
-
-    for im_class, im_coll in img_coll.items():
-        indexes = random_image_selector(num_images, im_coll)
-        image_names = [im_coll.image_list[indexes[i]] for i in range(len(indexes))]
-
-        class_params = np.zeros(len(image_names))
-
-        for i, img in enumerate(image_names):
-            rgb = np.array(Image.open(im_coll.image_folder + '\\' + img))
-
-            if isinstance(param_extraction, tuple):
-                class_params[i] = param_extraction[0](rgb, *args, **{**param_extraction[1], **kwargs})
-            else:
-                class_params[i] = param_extraction(rgb, *args, **kwargs)
-
-        params[im_class] = {
-            'image_names': image_names,
-            'params': class_params
-        }
-
-    plot_1d(params, bins, title, xlabel)
-    return params
-
-
 def param_nd(img_coll: Dict[str, ImageCollection],
              param_extraction: List[ParamExtractor_t],
              num_images=200, *args, **kwargs) -> Dict[str, Dict]:
+    """
+    Extract n params from an image collection for a number of images and returns a dict of the extracted parameters
+    """
 
     params = {}
 
@@ -87,6 +69,9 @@ def param_nd(img_coll: Dict[str, ImageCollection],
 
 
 def param_remove_unused(params, to_remove):
+    """
+    Remove a parameter from a collection of parameters
+    """
     to_remove.sort(reverse=True)
     for x in params.keys():
         for index in to_remove:

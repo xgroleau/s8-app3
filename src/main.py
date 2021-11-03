@@ -14,7 +14,6 @@ from src.classifier.knn import knn_classifier
 from src.classifier.subclasses import subclass, subclass_param_threshold
 from src.images import random_image_selector
 from src.images.image_collection import ImageCollection, load_collection_from_file
-from src.params.param import param_1d, param_nd
 from src.params.extract_param import *
 from src.visualization import images_display, plot_sub_params
 from src.visualization.view_histogram import histogrammes

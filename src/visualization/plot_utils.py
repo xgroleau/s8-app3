@@ -42,6 +42,9 @@ def confidence_ellipse(data, ax, scale=1, facecolor='none', **kwargs):
 
 
 def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None):
+    """
+    Plot an histogram for a 1d parameter
+    """
     plt.figure()
     plt.hist([v['params'] for v in params.values()], bins, alpha=0.5, label=[*params.keys()])
     plt.title(title)
@@ -56,13 +59,8 @@ def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", ell
     plt.figure()
     ax = plt.axes()
     for i, (k, e) in enumerate(params.items()):
-        if k == 'errors':
-            ax.scatter(e['params'][:, 0], e['params'][:, 1], color='red', label=k)
-        else:
-            ax.scatter(e['params'][:, 0], e['params'][:, 1], alpha=0.5, marker='x', color=colors[i], label=k)
-            if ellipsis:
-                confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=1)
-                confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=3)
+        if cluster_center:
+            ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], alpha=1, marker="o", color=colors[i], label=f"{k}_cc")
 
     plt.title(title)
     ax.set_xlabel(xlabel)
@@ -70,14 +68,21 @@ def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", ell
     ax.legend()
 
 
-def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zlabel="z", colors=None):
+def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zlabel="z", cluster_center=None, colors=None):
+    """
+    Plot a 3d scatter for the given parameters
+    """
+    colors = ['red', 'green', 'blue', 'violet', 'cyan', 'gold', 'aqua', 'brown']
+
     plt.figure()
     ax = plt.axes(projection='3d')
-    for k, e in params.items():
+    for i, (k, e) in enumerate(params.items()):
         if k == 'errors':
             ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], color='red', label=k)
         else:
-            ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], marker='x', alpha=0.5, label=k)
+        ax.scatter(e['params'][:, 0], e['params'][:, 1], e['params'][:, 2], alpha=0.5, color=colors[i], label=k)
+        if cluster_center:
+            ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], cluster_center[k][:, 2], alpha=1, marker="x", color=colors[i], label=f"{k}_cc")
     plt.title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
@@ -85,9 +90,12 @@ def plot_3d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", zla
     ax.legend()
 
 
-def plot_sub_params(params: Dict[str, Dict], param_indexes: Union[Tuple, int],
-                    param_labels: Union[List[str], None] = None, *args, **kwargs):
+def plot_sub_params(params: Dict[str, np.ndarray], param_indexes: Union[Tuple, int],
+                    param_labels: Union[List[str], None] = None, cluster_center=None, *args, **kwargs):
     sub_params = {k: {'params': v['params'][:, param_indexes]} for k, v in params.items()}
+    sub_center = None
+    if cluster_center:
+        sub_center = {k: v[:, param_indexes] for k, v in cluster_center.items()}
 
     if isinstance(param_indexes, int):
         xlabel = param_labels[param_indexes] if param_labels is not None else "x"
@@ -95,11 +103,11 @@ def plot_sub_params(params: Dict[str, Dict], param_indexes: Union[Tuple, int],
     elif len(param_indexes) == 2:
         xlabel = param_labels[param_indexes[0]] if param_labels is not None else "x"
         ylabel = param_labels[param_indexes[1]] if param_labels is not None else "y"
-        plot_2d(sub_params, xlabel=xlabel, ylabel=ylabel, *args, **kwargs)
+        plot_2d(sub_params, xlabel=xlabel, ylabel=ylabel, cluster_center=sub_center, *args, **kwargs)
     elif len(param_indexes) == 3:
         xlabel = param_labels[param_indexes[0]] if param_labels is not None else "x"
         ylabel = param_labels[param_indexes[1]] if param_labels is not None else "y"
         zlabel = param_labels[param_indexes[2]] if param_labels is not None else "z"
-        plot_3d(sub_params, xlabel=xlabel, ylabel=ylabel, zlabel=zlabel, *args, **kwargs)
+        plot_3d(sub_params, xlabel=xlabel, ylabel=ylabel, zlabel=zlabel, cluster_center=sub_center, *args, **kwargs)
     else:
         raise ValueError(f'Param indexes must contain between 1 and 3 parameters')

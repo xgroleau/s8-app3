@@ -2,6 +2,9 @@ import numpy as np
 
 
 def rgb_to_cmyk(rgb_img):
+    """
+    Convert an rgb image to Cyan Magenta Yellow and Black
+    """
     # Make float and divide by 255 to give BGRdash
     rgbdash = rgb_img.astype(np.float) / 255.
     epsilon = 1e-12
@@ -23,6 +26,9 @@ def rgb_to_cmyk(rgb_img):
 
 
 def smooth(y, box_pts):
+    """
+    Smooth an dataset given a square function to convolve
+    """
     box = np.ones(box_pts)/box_pts
     y_smooth = np.convolve(y, box, mode='same')
     return y_smooth
