@@ -53,7 +53,7 @@ def plot_1d(params: Dict[str, Dict], bins=100, title="", xlabel="", colors=None)
     plt.legend()
 
 
-def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", ellipsis=True, cluster_center=None,
+def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", ellipsis=False, cluster_center=None,
             colors=None):
     colors = ['orange', 'green', 'blue', 'violet', 'cyan', 'gold', 'brown', 'grey']
 
@@ -64,6 +64,11 @@ def plot_2d(params: Dict[str, np.ndarray], title="", xlabel="x", ylabel="y", ell
             ax.scatter(e['params'][:, 0], e['params'][:, 1], color='red', label=k)
         else:
             ax.scatter(e['params'][:, 0], e['params'][:, 1], marker='x', color=colors[i], label=k)
+
+            if ellipsis:
+                confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=1)
+                confidence_ellipse(e['params'], ax, edgecolor=colors[i], scale=3)
+
             if cluster_center:
                 ax.scatter(cluster_center[k][:, 0], cluster_center[k][:, 1], alpha=1, marker="o", color=colors[i],
                            label=f"{k}_cc")

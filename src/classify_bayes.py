@@ -55,22 +55,23 @@ analyze_fisher_discriminant(params)
 
 bayes = BayesianClassifier(params, bins=1)
 
-view = (3,4)
+view = (1,3)
 
 plot_sub_params(params, view)
 
 params = subclass(params, 'coast', subclass_param_threshold, param_idx=5, threshold=0.05)
-plot_sub_params(params, view, param_labels)
+params = subclass(params, 'forest', subclass_param_threshold, param_idx=5, threshold=0.05)
+plot_sub_params(params, view, param_labels, ellipsis=True)
 
 cost_matrix = np.array([[0, 1, 1, 1], [1, 0, 2, 1], [1, 1, 0, 1], [1, 1, 1, 0]])
 
 bayes2 = BayesianClassifier(params, bins=10)
-classify(params, bayes2.fit_multiple, likelihood='gaussian', visualize_errors_dims=view, cost_matrix=cost_matrix)
+classify(params, bayes2.fit_multiple, likelihood='gaussian', visualize_errors_dims=view)
 export_collection({k: v['image_names'] for k, v in params.items()}, "collection.pkl")
 analyze_fisher_discriminant(params)
 
 params = param_remove_unused(params, [0, 1, 2, 5, 6])
 bayes3 = BayesianClassifier(params, bins=10)
-bayes3.display_decision_boundary((0,1), likelihood='gaussian', cost_matrix=cost_matrix)
+bayes3.display_decision_boundary((0,1), likelihood='arbitrary')
 
 plt.show()
