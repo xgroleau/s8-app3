@@ -27,3 +27,8 @@ To run the Bayes classification script you can call
 ```sh
 python -m src.calssify_bayes
 ``` 
+
+The classifier can be switched from using a gaussian likelihood to an arbitrary likelihood bu using
+```python
+classify(params, bayes2.fit_multiple, likelihood='arbitrary', visualize_errors_dims=view)
+````
